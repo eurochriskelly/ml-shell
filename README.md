@@ -1,5 +1,7 @@
 # ml-shell
 
+`ml-shell` is a command-line tool interacting with MarkLlogic.
+
 ## Installation
 
 
