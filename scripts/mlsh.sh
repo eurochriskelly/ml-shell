@@ -116,10 +116,12 @@ showHelp() {
 mlshUpdate() {
   echo "Updating ml-shell..."
   local timestamp=$(date +%s)
+  local OLD_DIR=$(pwd)
   local updir=/tmp/ml-shell/$timestamp
   local force=$1
   if [ -z "$force" ]; then
     echo "Please use 'mlsh update -f' to replace files."
+    force=false
   else
     force=true
   fi
@@ -151,10 +153,11 @@ mlshUpdate() {
     mv $MLSH_TOP_DIR/* $MLSH_TOP_DIR/versions/$timestamp
     mv $dir/* $MLSH_TOP_DIR/
   else
-    echo "Update will be stored in './update' folder."
     mv $dir/* .
+    echo "Update was copied to $(pwd). Please review and copy to $MLSH_TOP_DIR"
   fi
-  echo "rm -rf $dir"
+  rm -rf $dir
+  cd $OLD_DIR 2>&1 > /dev/null
 }
 
 mlsh $@
