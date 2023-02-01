@@ -2,12 +2,8 @@
 
 echo "Initializing ml-shell..."
 getScriptDir() {
-  local scriptPath=$(readlink -f $1)
-  local scriptDir=$(dirname $1)
-  if [ "$scriptDir" = "." ]; then
-    scriptDir=$(pwd)
-  fi
-  echo $scriptDir
+  SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+  echo $SCRIPT_DIR
 }
 
 export MLSH_TOP_DIR=$(getScriptDir $0)
