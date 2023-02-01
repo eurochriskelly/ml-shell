@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Please set this to the path to your corb.jar file
+export CORB_JAR=corb.jar
+export XCC_JAR=xcc.jar
+
+# TODO: Extract these detail from the appserver config
+export ML_ENV=local
+export ML_MODULES_DB=modules
+export ML_CONTENT_DB=content
+export ML_TRIGGERS_DB=triggers
+export ML_SCHEMAS_DB=schemas
+
+case $ML_ENV in
+  local)
+    export ML_HOST=localhost
+    export ML_PORT=8000
+    export ML_USER=admin
+    export ML_PASS=admin
+    export ML_PROTOCOL=http
+    ;;
+
+  *)
+    echo "Unknown environment [$ML_ENV]"
+    ;;
+esac
