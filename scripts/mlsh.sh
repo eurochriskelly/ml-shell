@@ -15,6 +15,10 @@ mlsh() {
       doEval "${args[@]}"
       ;;
 
+    "update")
+      mlshUpdate "${args[@]}"
+      ;;
+
     "fetch")
       fetch "${args[@]}"
       ;;
@@ -98,6 +102,7 @@ showHelp() {
       echo ""
       echo "Commands:"
       echo " mlsh init                                       # source this file"
+      echo " mlsh update                                     # update ml-shell from github (zip)"
       echo " mlsh qc [pull|push]                             # pull/push from/to query console"
       echo " mlsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mlsh eval <script> <db> <vars>                  # run eval script"
@@ -106,6 +111,50 @@ showHelp() {
       echo ""
       ;;
   esac
+}
+
+mlshUpdate() {
+  echo "Updating ml-shell..."
+  local timestamp=$(date +%s)
+  local updir=/tmp/ml-shell/$timestamp
+  local force=$1
+  if [ -z "$force" ]; then
+    echo "Please use 'mlsh update -f' to replace files."
+  else
+    force=true
+  fi
+  cd $MLSH_TOP_DIR
+  test -d /tmp/ml-shell && rm -rf /tmp/ml-shell
+  mkdir -p $updir
+  local releaseInfo=$(curl -s https://api.github.com/repos/eurochriskelly/ml-shell/releases/latest)
+  local tag=$(
+    echo "$releaseInfo" \
+    | grep tag_name \
+    | awk -F": " '{print $2}' \
+    | awk -F\" '{print $2}'
+  )
+  ## Download zip for current version
+  echo "$releaseInfo" \
+    | grep zipball \
+    | awk -F": " '{print $2}' \
+    | awk -F\" '{print $2}' \
+    | wget -qi -
+
+  mv "$tag" $updir/latest.zip
+  cd $updir
+  unzip -q latest.zip
+  rm latest.zip
+  local dir=$(ls -d *)
+  if "$force";then
+    echo "Replacing current version. Backing up previous version to './versions/$timestamp'"
+    mkdir -p $MLSH_TOP_DIR/versions/$timestamp
+    mv $MLSH_TOP_DIR/* $MLSH_TOP_DIR/versions/$timestamp
+    mv $dir/* $MLSH_TOP_DIR/
+  else
+    echo "Update will be stored in './update' folder."
+    mv $dir/* .
+  fi
+  echo "rm -rf $dir"
 }
 
 mlsh $@
