@@ -9,6 +9,16 @@ getScriptDir() {
   echo $scriptDir
 }
 
-export MSH_TOP_DIR=$(getScriptDir)
-alias qc="cd $MSH_TOP_DIR; bash scripts/qc.sh"
-alias mlsh="cd $MSH_TOP_DIR; bash scripts/mlsh.sh"
+export MLSH_TOP_DIR=$(getScriptDir)
+alias qc="cd $MLSH_TOP_DIR; bash scripts/qc.sh"
+alias mlsh="cd $MLSH_TOP_DIR; bash scripts/mlsh.sh"
+
+
+if [ ! -f "$MLSH_TOP_DIR/env.sh" ]; then
+  echo "Creating a default .mlshrc file in your home directory."
+  echo "Please modify as needed."
+  cp $MLSH_TOP_DIR/.mlshrc.example ~/.mlshrc
+  exit
+fi
+
+source ~/.mlshrc

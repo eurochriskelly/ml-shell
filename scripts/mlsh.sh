@@ -6,7 +6,7 @@ mlsh() {
   local args=($@)
   case $cmd in
     "qc")
-      cd $MSH_TOP_DIR
+      cd $MLSH_TOP_DIR
       bash scripts/qc.sh "${args[@]}"
       ;;
     "eval")
@@ -15,8 +15,11 @@ mlsh() {
     "fetch")
       fetch "${args[@]}"
       ;;
-    "run")
+    "corb")
       runCorb "${args[@]}"
+      ;;
+    "init")
+      source $MLSH_TOP_DIR/init.sh
       ;;
     *)
       echo "Unknown command [$cmd]"
@@ -27,11 +30,10 @@ mlsh() {
 
 showHelp() {
   echo ""
-  echo "mlsh eval <script> <db> <vars>"
-  echo "mlsh fetch <endpoint> <rest>"
-  echo "mlsh run <task> <job> <threads> <batchSize>"
-  echo "mlsh qc [pull|push]"
+  echo "mlsh init                                       # source this file"
+  echo "mlsh qc [pull|push]                             # pull/push from/to query console"
+  echo "mlsh corb <task> <job> <threads> <batchSize>    # run corb task"
+  echo "mlsh eval <script> <db> <vars>                  # run eval script"
+  echo "mlsh fetch <endpoint> <rest>                    # fetch from ml"
   echo ""
 }
-
-mlsh $@
