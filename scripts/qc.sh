@@ -163,8 +163,6 @@ processOptions() {
 # common functions
 {
 
-
-
   # Download contents of a query to a local file
   downloadQuery() {
     local qid=$1
