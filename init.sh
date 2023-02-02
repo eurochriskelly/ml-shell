@@ -22,5 +22,14 @@ source ~/.mulshrc
 alias qc="bash $MULSH_TOP_DIR/scripts/qc.sh"
 alias mulsh="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
 alias mulsh:go="cd $MULSH_TOP_DIR"
+# shortcuts
+alias mle="mulsh eval $@"
+alias mlm="mulsh mlcp $@"
+alias mlq="mulsh qc $@"
+alias mlc="mulsh corb $@"
+alias mlr="mulsh rest $@"
+alias mlu="mulsh update $@"
+alias mli="mulsh init $@"
+
 
 echo "Done."
