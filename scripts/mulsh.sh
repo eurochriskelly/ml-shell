@@ -12,14 +12,14 @@ mulsh() {
       ;;
 
     "eval")
-      doEval "${args[@]}"
+      bash $MULSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
     "update")
       mulshUpdate "${args[@]}"
       ;;
 
-    "fetch")
+    "rest")
       fetch "${args[@]}"
       ;;
 
@@ -70,18 +70,18 @@ showHelp() {
       echo "Runs an eval script against the database."
       echo ""
       echo "Examples:"
-      echo " mulsh eval /path/to/script.xqy App-Services"
+      echo " mulsh eval /path/to/script.xqy Documents"
       echo " mulsh eval /path/to/script.xqy App-Services \"var1=value1&var2=value2\""
       ;;
 
-    "fetch")
-      echo "Usage: mulsh fetch <endpoint> <rest>"
+    "rest")
+      echo "Usage: mulsh rest <endpoint> <rest>"
       echo ""
       echo "Fetches a resource from the database."
       echo ""
       echo "Examples:"
-      echo " mulsh fetch /manage/v2/databases"
-      echo " mulsh fetch /manage/v2/databases App-Services"
+      echo " mulsh rest /manage/v2/databases"
+      echo " mulsh rest /manage/v2/databases App-Services"
       ;;
 
     "mlcp")
@@ -96,10 +96,18 @@ showHelp() {
     "corb")
       echo "Usage: mulsh corb <task> <job> <threads> <batchSize>"
       echo ""
-      echo "Runs a corb task."
+      echo " Runs a corb task as specifeid in the task folder."
+      echo " - if omitted, the job name will be the current folder"
+      echo ""
+      echo " Job name must be specified and match basename of properties"
+      echo " file in the <task>/job folder."
+      echo " - e.g. if job name is 'foo', then the jobs/foo.properties "
+      echo "        file must"
       echo ""
       echo "Examples:"
-      echo " mulsh corb /path/to/task.xqy /path/to/job.xml 4 100"
+      echo " mulsh corb --job jobName"
+      echo " mulsh corb --job jobName --taskDir path/taskDir --threads 6"
+      echo " mulsh corb --job jobName --taskDir path/taskDir [--threads 4] [--batchs 100]"
       ;;
 
     "help")
@@ -120,11 +128,12 @@ showHelp() {
       echo ""
       echo "Commands:"
       echo " mulsh init                                       # source this file"
+      echo " mulsh config                                     # configure current state (e.g. environment, database)"
       echo " mulsh update                                     # update ml-shell from github (zip)"
       echo " mulsh qc [pull|push]                             # pull/push from/to query console"
       echo " mulsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mulsh eval <script> <db> <vars>                  # run eval script"
-      echo " mulsh fetch <endpoint> <rest>                    # fetch from ml"
+      echo " mulsh rest <endpoint> <rest>                     # call ml rest endpoint"
       echo " mulsh mlcp <args>                                # run mlcp"
       echo " mulsh help <command> .                           # for more info on a command"
       echo ""
