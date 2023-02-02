@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Recommendation
+# : copy or symlink corb.jar and xcc.jar to ~/.mulsh.d/ directory
+# : copy or symlink mlcp directory to ~/.mulsh.d/ directory
+
+# Please set this to the path to your corb.jar file
+export MULSH_TOP_DIR=~/.mulsh.d/mulsh
+export CORB_JAR=~/.mulsh.d/dependencies/corb.jar
+export XCC_JAR=~/.mulsh.d/dependencies/xcc.jar
+export MLCP_PATH=~/.mulsh.d/dependencies/mlcp/bin/mlcp.sh
+
+if [ ! -f "$CORB_JAR" ]; then
+  echo "WARNING: Missing [$CORB_JAR]. Please copy or symlink corb.jar to ~/.mulsh.d/dependencies directory."
+  return
+fi
+if [ ! -f "$XCC_JAR" ]; then
+  echo "WARNING: Missing [$XCC_JAR]. Please copy or symlink xcc.jar to ~/.mulsh.d/dependencies directory."
+  return
+fi
+if [ ! -f "$MLCP_PATH" ]; then
+  echo "WARNING: Missing [$MLCP_PATH]. Please copy or symlink mlcp directory to ~/.mulsh.d/dependencies directory."
+  return
+fi
+
+
+# TODO: Extract these detail from the appserver config
+export ML_ENV=local
+export ML_MODULES_DB=modules
+export ML_CONTENT_DB=content
+export ML_TRIGGERS_DB=triggers
+export ML_SCHEMAS_DB=schemas
+
+case $ML_ENV in
+  local)
+    export ML_HOST=localhost
+    export ML_PORT=8000
+    export ML_USER=admin
+    export ML_PASS=admin
+    export ML_PROTOCOL=http
+    ;;
+
+  *)
+    echo "Unknown environment [$ML_ENV]"
+    ;;
+esac
