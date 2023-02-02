@@ -1,22 +1,26 @@
 #!/bin/bash
 
 echo "Initializing ml-shell..."
-getScriptDir() {
-  SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-  echo $SCRIPT_DIR
-}
 
-export MLSH_TOP_DIR=$(getScriptDir $0)
-alias qc="bash $MLSH_TOP_DIR/scripts/qc.sh"
-alias mlsh="bash $MLSH_TOP_DIR/scripts/mlsh.sh"
-alias mlsh:go="cd $MLSH_TOP_DIR"
-
-if [ ! -f "$HOME/.mlshrc" ]; then
-  echo "No ~/.mlshrc file found."
-  echo "Creating a default .mlshrc file in your home directory."
-  echo "Please modify as needed."
-  cp $MLSH_TOP_DIR/mlshrc.template ~/.mlshrc
+if [ ! -f "$HOME/.mulshrc" ]; then
+  echo "No ~/.mulshrc file found."
+  if [ ! -d "$HOME/.mulsh.d" ]; then
+    echo "mulsh not found in the default location of ~/.mulsh.d/mulsh"
+    echo "Please set MULSH_TOP_DIR in your ~/.mulshrc file."
+    exit 1
+  else
+    echo "Creating a default .mulshrc file in your home directory."
+    echo "Please modify as needed."
+    cp ~/.mulsh.d/mulsh/mulshrc.template ~/.mulshrc
+    mkdir -p ~/.mulsh.d/dependencies
+  fi
 fi
 
-echo "Sourcing ~/.mlshrc"
-source ~/.mlshrc
+echo "Sourcing ~/.mulshrc"
+source ~/.mulshrc
+
+alias qc="bash $MULSH_TOP_DIR/scripts/qc.sh"
+alias mulsh="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
+alias mulsh:go="cd $MULSH_TOP_DIR"
+
+echo "Done."
