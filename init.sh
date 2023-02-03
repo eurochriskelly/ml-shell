@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initializing ml-shell..."
+echo "Initializing mulsh..."
 
 if [ ! -f "$HOME/.mulshrc" ]; then
   echo "No ~/.mulshrc file found."
@@ -23,7 +23,7 @@ alias qc="bash $MULSH_TOP_DIR/scripts/qc.sh"
 alias mulsh="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
 alias mulsh:go="cd $MULSH_TOP_DIR"
 # shortcuts
-alias mle="mulsh eval $@"
+alias mle="deno run --allow-write --allow-env --allow-net --allow-run --no-check $MULSH_TOP_DIR/src/eval.ts $@"
 alias mlm="mulsh mlcp $@"
 alias mlq="mulsh qc $@"
 alias mlc="mulsh corb $@"
