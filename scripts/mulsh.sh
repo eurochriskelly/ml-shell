@@ -129,7 +129,7 @@ showHelp() {
       echo "Commands:"
       echo " mulsh init                                       # source this file"
       echo " mulsh config                                     # configure current state (e.g. environment, database)"
-      echo " mulsh update                                     # update ml-shell from github (zip)"
+      echo " mulsh update                                     # update mulsh from github (zip)"
       echo " mulsh qc [pull|push]                             # pull/push from/to query console"
       echo " mulsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mulsh eval <script> <db> <vars>                  # run eval script"
@@ -142,10 +142,10 @@ showHelp() {
 }
 
 mulshUpdate() {
-  echo "Updating ml-shell..."
+  echo "Updating mulsh from github..."
   local timestamp=$(date +%s)
   local OLD_DIR=$(pwd)
-  local updir=/tmp/ml-shell/$timestamp
+  local updir=/tmp/mulsh/$timestamp
   local force=$1
   if [ -z "$force" ]; then
     echo "Please use 'mulsh update -f' to replace files."
@@ -154,9 +154,9 @@ mulshUpdate() {
     force=true
   fi
   cd $MULSH_TOP_DIR
-  test -d /tmp/ml-shell && rm -rf /tmp/ml-shell
+  test -d /tmp/mulsh && rm -rf /tmp/mulsh
   mkdir -p $updir
-  local releaseInfo=$(curl -s https://api.github.com/repos/eurochriskelly/ml-shell/releases/latest)
+  local releaseInfo=$(curl -s https://api.github.com/repos/eurochriskelly/mulsh/releases/latest)
   local tag=$(
     echo "$releaseInfo" \
     | grep tag_name \
