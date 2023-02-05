@@ -23,6 +23,10 @@ mulsh() {
       fetch "${args[@]}"
       ;;
 
+    "modules")
+      bash $MULSH_TOP_DIR/scripts/modules.sh "${args[@]}"
+      ;;
+
     "mlcp")
       bash $MULSH_TOP_DIR/scripts/mlcp-runner.sh "${args[@]}"
       ;;
@@ -122,6 +126,18 @@ showHelp() {
       echo " mulsh help corb"
       ;;
 
+    "modules")
+      echo "Usage: mulsh modules <command>"
+      echo ""
+      echo "Manage modules."
+      echo ""
+      echo "Examples:"
+      echo " mulsh modules find"
+      echo " mulsh modules deploy <module>"
+      echo " mulsh modules undeploy <module>"
+      echo " mulsh modules reset <id>"
+      ;;
+
     *)
       echo ""
       echo "mulsh <command> <args>                           # run a command"
@@ -135,6 +151,7 @@ showHelp() {
       echo " mulsh eval <script> <db> <vars>                  # run eval script"
       echo " mulsh rest <endpoint> <rest>                     # call ml rest endpoint"
       echo " mulsh mlcp <args>                                # run mlcp"
+      echo " mulsh modules <command>                          # manage modules"
       echo " mulsh help <command> .                           # for more info on a command"
       echo ""
       ;;
