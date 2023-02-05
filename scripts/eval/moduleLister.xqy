@@ -13,15 +13,16 @@ declare function local:main(
     $m,
     fn:replace($m, '/', '%'),
     fn:string-join(
-      $permissions ! (./*:capability/fn:string() || ':' || ./*:role-id/fn:string()),
-      ','),
-    fn:string-join($collections, ','),
+      $permissions ! ('perm:' || xdmp:role-name(./*:role-id/xs:integer(.)) || '=' || ./*:capability/fn:string()),
+      '#AMP#'
+    ),
+    fn:string-join($collections ! ('collection=' || .), '#AMP#'),
     'EOL'
-    ), '~')
+  ),'~')
 };
 
 local:main(
    if (fn:starts-with(xdmp:get-request-path(), '/qconsole'))
-   then '/*/frbr/*style*create*.xsl'
+   then '*frbr*lib*search*xqy'
    else $pattern
 )
