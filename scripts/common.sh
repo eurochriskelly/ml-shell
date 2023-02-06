@@ -8,12 +8,10 @@ WW() { echo "WW $(date) $@"; }
 LL() { echo "$(date) $@"; >> /tmp/mulsh.log; }
 
 fetch() {
-  LL "Killing me softly with his song"
   local endpoint=$1
   shift
   local rest=($@)
   local URL="${ML_PROTOCOL}://${ML_HOST}:${ML_PORT}${endpoint}"
-  LL "Fetching [$URL]"
   # TODO generate based on environment
   local curlOpts=(
     --insecure
