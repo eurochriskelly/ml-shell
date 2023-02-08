@@ -7,28 +7,37 @@ mulsh() {
   shift
   local args=($@)
   case $cmd in
-    "qc")
-      bash $MULSH_TOP_DIR/scripts/qc.sh "${args[@]}"
-      ;;
-
-    "eval")
-      bash $MULSH_TOP_DIR/scripts/eval.sh "${args[@]}"
-      ;;
-
+    # Core commands
     "update")
       mulshUpdate "${args[@]}"
+      ;;
+
+    "init")
+      source $MULSH_TOP_DIR/init.sh
+      ;;
+
+    "help")
+      showHelp ${args[@]}
+      ;;
+
+    # Wrappers
+    "eval")
+      bash $MULSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
     "rest")
       fetch "${args[@]}"
       ;;
 
-    "modules")
+    "qc|qconsole")
+      bash $MULSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
+      ;;
+    "mod|modules")
       bash $MULSH_TOP_DIR/scripts/modules.sh "${args[@]}"
       ;;
 
     "mlcp")
-      bash $MULSH_TOP_DIR/scripts/mlcp-runner.sh "${args[@]}"
+      bash $MULSH_TOP_DIR/scripts/mlcp-wrapper.sh "${args[@]}"
       ;;
 
     "corb")
@@ -42,12 +51,7 @@ mulsh() {
       fi
       runCorb "${args[@]}"
       ;;
-    "init")
-      source $MULSH_TOP_DIR/init.sh
-      ;;
-    "help")
-      showHelp ${args[@]}
-      ;;
+
     *)
       echo "Unknown command [$cmd]"
       showHelp

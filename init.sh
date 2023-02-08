@@ -19,15 +19,17 @@ fi
 echo "Sourcing ~/.mulshrc"
 source ~/.mulshrc
 
-alias qc="bash $MULSH_TOP_DIR/scripts/qc.sh"
 alias mulsh="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
 alias mulsh:go="cd $MULSH_TOP_DIR"
-# shortcuts
-alias mle="deno run --allow-write --allow-env --allow-net --allow-run --no-check $MULSH_TOP_DIR/src/eval.ts $@"
+
+## shortcuts
+ # wrappers
+alias mle="mulsh eval $@"
 alias mlm="mulsh mlcp $@"
 alias mlq="mulsh qc $@"
 alias mlc="mulsh corb $@"
 alias mlr="mulsh rest $@"
+ # core commands
 alias mlu="mulsh update $@"
 alias mli="mulsh init $@"
 
