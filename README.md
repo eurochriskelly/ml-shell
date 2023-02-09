@@ -1,15 +1,71 @@
 # mulsh
 
-`mulsh` (MarkLogic shell) is a command-line, "swiss-army" tool for
-interacting with and developing MarkLlogic Application. It is
-developed purely as lowest-common-denominator tool, (fully written in
+`mulsh` (MarkLogic shell) is a command-line, "swiss-army knife" for
+interacting with and developing MarkLogic Application. It is
+developed lowest-common-denominator tool, (fully written in
 bash), and preloaded in your user environment where it can be used
 across projects, regardless of build system.
 
-`mulsh` commands can be run with known parameters and scripted (See
-#scripting below). However, if no parameters are provided, the command
-will run interactively, prompting the user for input. e.g. Transferring
-documents from one instance to another should be as simple as:
+`mulsh` commands can be run with known parameters and scripted. However,
+if no parameters are provided, the will run interactively. See #Usage below.>
+
+## Installation
+
+### Download
+To get started, create a folder for mulsh, e.g.
+```
+mkdir -p ~/.mulsh.d
+cd ~/.mulsh.d
+```
+
+The download and unpack the release
+```
+curl -s https://api.github.com/repos/eurochriskelly/mulsh/releases/latest \
+  | grep zipball_url \
+  | awk -F": " '{print $2}' \
+  | awk -F\" '{print $2}' \
+  | wget -qi - -O mulsh.zip
+```
+Move the archive contents into the current folder.
+
+### Configure
+
+Add the following to your `.bashrc` or equivalent init file. e.g.
+
+`source ~/mulsh.d/init.sh`
+
+Finally, copy the .mulsh.template file to the path `~/.mulshrc` and
+edit the settings according to your local environment.
+
+## Updates
+
+To update to the latest version, run:
+
+`mulsh update`
+
+Alternatively, if not using the release, pull the latest code using `git pull`.
+
+## Features & Usage
+
+`mulsh`, when run alone lists all available commands. Commands are typically
+interactive (but can be scripted) and run using the syntax `mulsh <command>`.
+More information on any command can be found using `mulsh help <command>`.
+
+The following table list the main features:
+
+|Command  |Description                                |
+|---------|-------------------------------------------|
+|qc       |Push and pull workspaces from database     |
+|modules  |Download modules, edit, load & reset state |
+|eval     |Evaluate a locally stored script           |
+|mlcp     |Mlcp wrapper                               |
+
+# Usage
+
+## Interactive
+Commands run withoiut options should prompt the user for input.
+e.g. Transferring documents from one instance to another should be as
+simple as:
 
 ```
 $ mulsh transfer
@@ -32,39 +88,8 @@ mulsh v0.1.0:
 etc.
 ```
 
-## Installation
+## Scripting
 
-To get started, create a folder for mulsh, e.g.
-```
-mkdir -p ~/.mulsh.d
-cd ~/.mulsh.d
-```
+Check the help for scripting options as follows:
 
-The download and unpack the release
-```
-curl -s https://api.github.com/repos/eurochriskelly/mulsh/releases/latest \
-  | grep zipball_url \
-  | awk -F": " '{print $2}' \
-  | awk -F\" '{print $2}' \
-  | wget -qi - -O mulsh.zip
-```
-Move the archive contents into the current folder
-
-Add the following to your `.bashrc` or equivalent init file.
-
-`source path/to/mulsh/init.sh`
-
-## Features & Usage
-
-`mulsh`, when run alone lists all available commands. Commands are typically
-interactive (but can be scripted) and run using the syntax `mulsh <command>`.
-More information on any command can be found using `mulsh help <command>`.
-
-The following table list the main features:
-
-|Command  |Description                                |
-|---------|-------------------------------------------|
-|qc       |Push and pull workspaces from database     |
-|modules  |Download modules, edit, load & reset state |
-|eval     |Evaluate a locally stored script           |
-|mlcp     |Mlcp wrapper                               |
+`mulsh help <command>`
