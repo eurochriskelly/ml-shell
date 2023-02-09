@@ -25,10 +25,6 @@ mulsh() {
       bash $MULSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
-    "rest")
-      fetch "${args[@]}"
-      ;;
-
     "qc|qconsole")
       bash $MULSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
       ;;
@@ -82,16 +78,6 @@ showHelp() {
       echo " mulsh eval /path/to/script.xqy App-Services \"var1=value1&var2=value2\""
       ;;
 
-    "rest")
-      echo "Usage: mulsh rest <endpoint> <rest>"
-      echo ""
-      echo "Fetches a resource from the database."
-      echo ""
-      echo "Examples:"
-      echo " mulsh rest /manage/v2/databases"
-      echo " mulsh rest /manage/v2/databases App-Services"
-      ;;
-
     "mlcp")
       echo "Usage: mulsh mlcp <args>"
       echo ""
@@ -139,7 +125,6 @@ showHelp() {
       echo " mulsh modules find"
       echo " mulsh modules deploy <module>"
       echo " mulsh modules undeploy <module>"
-      echo " mulsh modules reset <id>"
       ;;
 
     *)
@@ -153,7 +138,6 @@ showHelp() {
       echo " mulsh qc [pull|push]                             # pull/push from/to query console"
       echo " mulsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mulsh eval <script> <db> <vars>                  # run eval script"
-      echo " mulsh rest <endpoint> <rest>                     # call ml rest endpoint"
       echo " mulsh mlcp <args>                                # run mlcp"
       echo " mulsh modules <command>                          # manage modules"
       echo " mulsh help <command> .                           # for more info on a command"
