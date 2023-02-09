@@ -6,6 +6,32 @@ developed purely as lowest-common-denominator tool, (fully written in
 bash), and preloaded in your user environment where it can be used
 across projects, regardless of build system.
 
+`mulsh` commands can be run with known parameters and scripted (See
+#scripting below). However, if no parameters are provided, the command
+will run interactively, prompting the user for input. e.g. Transferring
+documents from one instance to another should be as simple as:
+
+```
+$ mulsh transfer
+mulsh v0.1.0:
+  Select the source host:
+  1) LOC: http://localhost
+  2) TST: http:/foo.bar.com
+  3) ACC: http://baz.qux.com
+  #? 2
+
+  Select the destination host:
+  1) LOC: http://localhost
+  #? 1
+
+  Select a collector or enter name of custom collector:
+  1) First 100 documents
+  2) My favourites list
+  #? ../custom.xqy
+
+etc.
+```
+
 ## Installation
 
 To get started, create a folder for mulsh, e.g.
