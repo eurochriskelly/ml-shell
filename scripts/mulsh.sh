@@ -8,35 +8,35 @@ mulsh() {
   local args=($@)
   case $cmd in
     # Core commands
-    "update")
+    update)
       mulshUpdate "${args[@]}"
       ;;
 
-    "init")
+    init)
       source $MULSH_TOP_DIR/init.sh
       ;;
 
-    "help")
+    help)
       showHelp ${args[@]}
       ;;
 
     # Wrappers
-    "eval")
+    eval)
       bash $MULSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
-    "qc|qconsole")
+    qc|qconsole)
       bash $MULSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
       ;;
-    "mod|modules")
+    mod|modules)
       bash $MULSH_TOP_DIR/scripts/modules.sh "${args[@]}"
       ;;
 
-    "mlcp")
+    mlcp)
       bash $MULSH_TOP_DIR/scripts/mlcp-wrapper.sh "${args[@]}"
       ;;
 
-    "corb")
+    corb)
       if [ ! -f "$CORB_JAR" ]; then
         echo "Please set CORB_JAR in your ~/.mulshrc file."
         return
@@ -64,8 +64,9 @@ showHelp() {
       echo "Pulls or pushes the query console from/to the database."
       echo ""
       echo "Examples:"
-      echo " mulsh qc pull"
-      echo " mulsh qc push"
+      echo " mulsh qc list             # list available workspaces"
+      echo " mulsh qc pull             # download queries"
+      echo " mulsh qc push             # upload queries"
       ;;
 
     "eval")
@@ -135,7 +136,7 @@ showHelp() {
       echo " mulsh init                                       # source this file"
       echo " mulsh config                                     # configure current state (e.g. environment, database)"
       echo " mulsh update                                     # update mulsh from github (zip)"
-      echo " mulsh qc [pull|push]                             # pull/push from/to query console"
+      echo " mulsh qc [list|pull|push]                        # list workspaces/pull/push from/to query console"
       echo " mulsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mulsh eval <script> <db> <vars>                  # run eval script"
       echo " mulsh mlcp <args>                                # run mlcp"

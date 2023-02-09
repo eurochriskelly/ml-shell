@@ -5,7 +5,7 @@ II() { echo "II $(date) $@"; }
 DD() { if [ -n "$MULSH_DEBUG" ]; then echo "DD $(date) $@"; fi; }
 EE() { echo "EE $(date) $@"; }
 WW() { echo "WW $(date) $@"; }
-LL() { echo "$(date) $@"; >> /tmp/mulsh.log; }
+LL() { echo "$(date) $@" >> /tmp/mulsh.log; }
 
 fetch() {
   local endpoint=$1
@@ -19,19 +19,27 @@ fetch() {
     -k --digest -s
     "${rest[@]}"
   )
+  LL "curl ${curlOpts[@]} $URL"
   curl "${curlOpts[@]}" "$URL"
 }
 
 doEval() {
   prepScript() {
+    local ts=$(date +%s)
     local script=$1
-    local tmp=/tmp/$2
+    find /tmp -name "mle-*" -exec rm {} \; 2>&1 > /dev/null
+    local tmp=/tmp/mle-$ts
     test -f $tmp && rm $tmp
     local db=$3
     local vars=$4
-    echo "xquery=" > $tmp
+    local extension="${script##*.}"
+    if [ "$extension" == "xqy" ];then
+      echo "xquery=" > $tmp
+    else
+      echo "javascript=" > $tmp
+    fi
     local txt=$(cat ${script})
-    echo $txt >>$tmp
+    echo "$txt" >> $tmp
     if [ -n "$vars" ]; then
       echo "&" >>$tmp
       echo "vars=${vars}" >>$tmp
@@ -48,22 +56,30 @@ doEval() {
   local base=$MULSH_TOP_DIR/scripts/eval/${1}
 
   # Check if it exists in the scripts/eval directory
-  if [[ -f "${base}.xqy" || -f "${base}.js" ]]; then
+  if [[ -f "${base}.xqy" || -f "${base}.sjs" || -f "${base}.js" ]]; then
     if [ -f "${base}.xqy" ]; then
       script=$MULSH_TOP_DIR/scripts/eval/${1}.xqy
     else
-      script=$MULSH_TOP_DIR/scripts/eval/${1}.js
+      if [ -f "${base}.sjs" ]; then
+        script=$MULSH_TOP_DIR/scripts/eval/${1}.sjs
+      else
+        script=$MULSH_TOP_DIR/scripts/eval/${1}.js
+      fi
     fi
   fi
 
   # Check if it exists locally
   if [ -z "$script" ]; then
     # check if $1 with either xqy OR js extension exists in current directory
-    if [[ -f "./${1}.xqy" || -f "./${1}.js" ]]; then
-      if [ -f "./${1}.xqy" ]; then
-        script=./${1}.xqy
+    if [[ -f "${1}.xqy" || -f "${1}.sjs" ||  -f "${1}.js" ]]; then
+      if [ -f "${1}.xqy" ]; then
+        script=${1}.xqy
       else
-        script=./${1}.js
+        if [ -f "${1}.sjs" ]; then
+          script=${1}.sjs
+        else
+          script=${1}.js
+        fi
       fi
     fi
   fi

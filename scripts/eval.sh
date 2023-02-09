@@ -11,7 +11,6 @@ showHelp() {
   echo "  -h|--help              Show this help"
 }
 
-echo $(pwd)
 run() {
   local database=$ML_CONTENT_DB
   while [[ $# -gt 0 ]];do
@@ -32,6 +31,7 @@ run() {
       --database|-d)
         shift;database=$1;shift
         ;;
+
       *)
         echo "Unknown argument [$1]"
         showHelp
