@@ -26,7 +26,8 @@ fi
 echo "Sourcing ~/.mulshrc"
 source ~/.mulshrc
 
-alias mulsh="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
+export MULSH_CMD="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
+alias mulsh="$MULSH_CMD"
 alias mulsh:go="cd $MULSH_TOP_DIR"
 
 ## shortcuts
@@ -36,6 +37,7 @@ alias mlm="mulsh mlcp $@"
 alias mlq="mulsh qc $@"
 alias mlc="mulsh corb $@"
 alias mlr="mulsh rest $@"
+
 # core commands
 alias mlu="mulsh update $@"
 alias mli="mulsh init $@"

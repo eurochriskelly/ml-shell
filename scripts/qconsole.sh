@@ -178,10 +178,10 @@ processOptions() {
     done
 
     echo ""
-    II "Updating workpaces and queries in database."
+    II "Updating workspaces and queries in database."
     doEval updateWorkspaces "App-Services" "{\"ts\":\"$TS\"}"
     echo ""
-    echo "Reload the workspace in your browswer to see changes!"
+    echo "Reload the workspace in your browser to see changes!"
     echo ""
   }
 }

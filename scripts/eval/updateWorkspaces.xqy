@@ -75,6 +75,9 @@ declare function local:run(
       , ',')
 };
 
-if (starts-with(xdmp:get-request-url(), '/qconsole'))
-then local:run('TEST_WORKSPACE') (: TODO: Add setup :)
-else local:run($ts)
+string-join(
+  if (starts-with(xdmp:get-request-url(), '/qconsole'))
+  then local:run('TEST_WORKSPACE') (: TODO: Add setup :)
+  else local:run($ts),
+  '&#xa;'
+)
