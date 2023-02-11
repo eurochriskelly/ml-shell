@@ -30,12 +30,12 @@ Move the archive contents into the current folder.
 
 ### Configure
 
-Add the following to your `.bashrc` or equivalent init file. e.g.
+Add the following to your `.profile` or equivalent init file. e.g.
 
 `source ~/mulsh.d/init.sh`
 
-Finally, copy the .mulsh.template file to the path `~/.mulshrc` and
-edit the settings according to your local environment.
+First time you run, a `~/mulshrc` file is created for your environment.
+Please fix any warnings so yo have full mulsh capabilities!
 
 ## Updates
 

@@ -13,22 +13,18 @@ export MLCP_PATH=~/.mulsh.d/dependencies/mlcp/bin/mlcp.sh
 
 if [ ! -f "$CORB_JAR" ]; then
   echo ""
-  echo "Warning: Missing [$CORB_JAR]. Please update configuration."
-  return
+  echo "WARNING: Missing [$CORB_JAR]. Please update configuration."
 fi
 if [ ! -f "$XCC_JAR" ]; then
   echo ""
   echo "WARNING: Missing [$XCC_JAR]. Please update configuration."
-  return
 fi
 if [ ! -f "$MLCP_PATH" ]; then
   echo ""    
   echo "WARNING: Missing [$MLCP_PATH]. Please update configuration."
-  return
 fi
 if [ ! -f "$MULSH_TOP_DIR/scripts/mulsh.sh" ]; then
   echo "WARNING: Please set \$MULSH_TOP_DIR correctly in ~/.mulshrc file."
-  return
 fi
 
 
