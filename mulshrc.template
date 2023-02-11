@@ -10,15 +10,19 @@ export CORB_JAR=~/.mulsh.d/dependencies/corb.jar
 export XCC_JAR=~/.mulsh.d/dependencies/xcc.jar
 export MLCP_PATH=~/.mulsh.d/dependencies/mlcp/bin/mlcp.sh
 
-If [ ! -F "$Corb_Jar" ]; Then
-  Echo "Warning: Missing [$Corb_Jar]. Please update configuration."
-  Return
-Fi
+
+if [ ! -f "$CORB_JAR" ]; then
+  echo ""
+  echo "Warning: Missing [$CORB_JAR]. Please update configuration."
+  return
+fi
 if [ ! -f "$XCC_JAR" ]; then
+  echo ""
   echo "WARNING: Missing [$XCC_JAR]. Please update configuration."
   return
 fi
 if [ ! -f "$MLCP_PATH" ]; then
+  echo ""    
   echo "WARNING: Missing [$MLCP_PATH]. Please update configuration."
   return
 fi
