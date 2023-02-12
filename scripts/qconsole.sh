@@ -21,6 +21,30 @@ main() {
     return
   fi
   local option=$1
+  if [ -z "$option" ]; then
+    # Ask user to select from known options
+    echo "Please select from the following options:"
+    echo "1. list"
+    echo "2. pull"
+    echo "3. push"
+    echo -n "Enter your choice: "
+    read choice
+    case $choice in
+      1) option="list" ;;
+      2) option="pull" ;;
+      3) option="push" ;;
+      *)
+        echo "Unknown option [$option]"
+        echo "Please select an option [push/pull/list]"
+        echo "e.g."
+        echo "mulsh qc push"
+        cd $MULSH_TOP_DIR
+        return
+        ;;
+    esac
+    echo "User selected option [$option]"
+  fi
+
   doEval cleanupArtefacts "App-Services" 2>&1 > /dev/null
   case $option in
     pull | down | download)
@@ -36,6 +60,7 @@ main() {
       ;;
 
     *)
+      # Let user select one of the known options
       echo "Unknown option [$option]"
       echo "Please select an option [push/pull/list]"
       echo "e.g."
@@ -108,7 +133,7 @@ processOptions() {
 
     if [ -n "$workspace" ]; then
       echo ""
-      II "Downloading artefacts of workspace.. [$workspace]"
+      II "Downloading queries from workspace.. [$workspace]"
       local notFound=true
       for q in $results; do
         local parts=($(echo $q | sed 's/,/\n/g' | sed 's/ *$//g'))

@@ -24,11 +24,40 @@ main() {
   local option=$1
   # doEval cleanupArtefacts "App-Services" 2>&1 > /dev/null
   # TODO: prep by backing up modules database
+  if [ -z "$option" ]; then
+    # Ask user to select from known options
+    echo "Please select from the following options:"
+    echo "1. find"
+    echo "2. load"
+    echo "3. reset"
+    echo -n "Enter your choice: "
+    read choice
+    case $choice in
+      1) option="find" ;;
+      2) option="load" ;;
+      3) option="reset" ;;
+      *)
+        echo "Unknown option [$option]"
+        echo "Please select an option [find/load/reset]"
+        echo "e.g."
+        echo "mulsh modules find"
+        cd $MULSH_TOP_DIR
+        return
+        ;;
+    esac
+    echo "User selected option [$option]"
+  fi
   case $option in
     # Find matching modules in the database and download if required
     find|retrieve|match|search)
       shift
-      findModules "$@"
+      local pattern=$1
+      if [ -z "$pattern" ]; then
+        echo -n "Please enter a pattern to match (e.g. *foo.xqy): "
+        read $pattern
+      fi
+      echo "Searching for modules matching [$pattern]"
+      findModules "$pattern"
       ;;
 
     # Load one or more locally edit modules into the database
@@ -56,7 +85,7 @@ findModules() {
     local ddir=modules_${TODAY} # one directory for a given day is plenty
     II "Finding modules in database [$ML_MODULES_DB]"
     local pattern=$1
-    local results=$(doEval moduleLister "${ML_MODULES_DB}" "{\"pattern\":\"${pattern}\"}")
+    local results=$(doEval moduleLister "${ML_MODULES_DB}" '{"pattern":"'${pattern}'"}')
     local i=1
     echo "Showing (max 50) results:"
     while read -r line; do

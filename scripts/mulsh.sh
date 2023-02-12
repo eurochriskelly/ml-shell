@@ -28,8 +28,13 @@ mulsh() {
     qc|qconsole)
       bash $MULSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
       ;;
+
     mod|modules)
       bash $MULSH_TOP_DIR/scripts/modules.sh "${args[@]}"
+      ;;
+
+    log|logs)
+      bash $MULSH_TOP_DIR/scripts/logs.sh "${args[@]}"
       ;;
 
     mlcp)
@@ -77,6 +82,23 @@ showHelp() {
       echo "Examples:"
       echo " mulsh eval /path/to/script.xqy Documents"
       echo " mulsh eval /path/to/script.xqy App-Services \"var1=value1&var2=value2\""
+      ;;
+
+    "log")
+      echo "Usage: mulsh log <db> <log>"
+      echo ""
+      echo "Shows the log for the database."
+      echo ""
+      echo "Examples:"
+      echo " - Show errors occurring in the last 10 minutes"
+      echo " mulsh log show-errors --time 10m"
+      echo ""
+      echo " - Search across the cluster for logs containing 'XDMP-AS'"
+      echo " mulsh log search --pattern 'XDMP-AS' --ports 8000,8001"
+      echo ""
+      echo " - Follow the logs on the cluster for"
+      echo " mulsh log follow --ports 8000,8001,Error,TaskServer"
+      echo ""
       ;;
 
     "mlcp")
@@ -137,6 +159,7 @@ showHelp() {
       echo " mulsh config                                     # configure current state (e.g. environment, database)"
       echo " mulsh update                                     # update mulsh from github (zip)"
       echo " mulsh qc [list|pull|push]                        # list workspaces/pull/push from/to query console"
+      echo " mulsh log [OPTIONS]                              # show log for database"
       echo " mulsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mulsh eval <script> <db> <vars>                  # run eval script"
       echo " mulsh mlcp <args>                                # run mlcp"

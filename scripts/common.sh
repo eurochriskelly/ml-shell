@@ -75,7 +75,7 @@ doEval() {
     --data-urlencode ${format}@${script}
     --data database="$2"
   )
-  if [ -n "$3" ];then opts=( "${opts[@]}" --data vars=$3 );fi
+  if [ -n "$3" ];then opts=( "${opts[@]}" --data-urlencode vars=$3 );fi
   local response=$(fetch "/v1/eval" "${opts[@]}")
   LL "$response"
   # Cleanup the response

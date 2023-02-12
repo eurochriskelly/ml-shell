@@ -23,23 +23,23 @@ if [ -f "$(which dos2unix)" ];then
 
 fi
 
-echo "Sourcing ~/.mulshrc"
 source ~/.mulshrc
 
+export MULSH_VERSION="0.1.0"
 export MULSH_CMD="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
 alias mulsh="$MULSH_CMD"
 alias mulsh:go="cd $MULSH_TOP_DIR"
 
 ## shortcuts
-# wrappers
+ # wrappers
 alias mle="mulsh eval $@"
 alias mlm="mulsh mlcp $@"
 alias mlq="mulsh qc $@"
 alias mlc="mulsh corb $@"
 alias mlr="mulsh rest $@"
 
-# core commands
+ # core commands
 alias mlu="mulsh update $@"
 alias mli="mulsh init $@"
 
-echo "Done."
+echo "Ready!"
