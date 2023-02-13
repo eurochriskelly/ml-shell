@@ -8,8 +8,12 @@ if (!MINUTES) MINUTES = 30
 
 console.log(`Checking for errors in the last [${MINUTES}] minutes`)
 
-const { filesystemDirectory, unquote, logfileScan } = xdmp
-const logPath = '/var/opt/MarkLogic/Logs'
+const { filesystemDirectory, unquote, logfileScan, platform } = xdmp
+// Assume default path locations
+const logPath =
+  xdmp.platform().toString() === 'winnt'
+  ? '/Program Files/MarkLogic/Data/Logs'
+  : '/var/opt/MarkLogic/Logs'
 
 const subtractMinutes = (date, minutes) => {
   return new Date(date.getTime() - minutes * 60000)

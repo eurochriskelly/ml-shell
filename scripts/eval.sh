@@ -28,6 +28,11 @@ run() {
         shift;params=$1;shift
         ;;
 
+      # Better to pass vars as A:B,C:D
+      --vars|-v)
+        shift;params=$(toJson $1);shift
+        ;;
+
       --database|-d)
         shift;database=$1;shift
         ;;

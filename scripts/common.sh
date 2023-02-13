@@ -97,3 +97,40 @@ doEval() {
     esac
   done <<< "$response"
 }
+
+# Useful function for converting
+# strings in the format A:B,C:D to {"A":"B","C":"D"}
+# without the need for escaping everything
+toJson() {
+  local input=$1
+  IFS=',' read -ra arr <<< "$input"
+  local json="{"
+  for i in "${arr[@]}";do
+    IFS=':' read -ra subarr <<< "$i"
+    json+="\"${subarr[0]}\":\"${subarr[1]}\","
+  done
+  json="${json%,}"}
+  echo $json
+}
+
+# Common functions
+mle() {
+  local fname=$1
+  local params=$2
+  if [ -n "$params" ];then
+    params=$(toJson $params)
+  fi
+  local result=
+  if [ -z "${params}" ];then
+    result=$($MULSH_CMD eval -s "${fname}.xqy")
+  else
+    result=$($MULSH_CMD eval -s "${fname}.xqy" -p "${params}")
+  fi
+  if [ -n "$(echo $result | grep 'Internal Server Error')" ];then
+    echo "$result"
+    echo " ---------------------------------"
+    echo "Error Exiting !"
+    exit 1
+  fi
+  echo "$result"
+}

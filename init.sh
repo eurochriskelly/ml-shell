@@ -20,7 +20,6 @@ if [ -f "$(which dos2unix)" ];then
     for d in $(find ~/.mulsh.d/ -name "*.sh");do
       dos2unix $d 2> /dev/null
     done
-
 fi
 
 source ~/.mulshrc

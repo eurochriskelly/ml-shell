@@ -26,7 +26,11 @@ if (INITIALIZE && INITIALIZE === '1') {
 
   if (!PATTERN) PATTERN = null
 
-  const logPath = '/var/opt/MarkLogic/Logs'
+  const logPath =
+    xdmp.platform() === 'winnt'
+    ? '/Program Files/MarkLogic/Data/Logs'
+    : '/var/opt/MarkLogic/Logs'
+
   const lines = Array
     .from(filesystemDirectory(`${logPath}`))
     // search only the current logs
