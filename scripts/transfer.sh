@@ -3,7 +3,7 @@
 # This script is used to transfer data from one MarkLogic instance to another.
 # Example usage:
 #
-# mulsh transfer --source local --target tst --collector collect.xqy
+# mlsh transfer --source local --target tst --collector collect.xqy
 #
 # Features:
 # - Uses mlcp to transfer data from one MarkLogic instance to another

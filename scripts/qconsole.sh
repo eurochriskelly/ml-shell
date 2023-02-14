@@ -37,7 +37,7 @@ main() {
         echo "Unknown option [$option]"
         echo "Please select an option [push/pull/list]"
         echo "e.g."
-        echo "mulsh qc push"
+        echo "mlsh qc push"
         cd $MLSH_TOP_DIR
         return
         ;;
