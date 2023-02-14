@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Log analysis tasks
-source $MULSH_TOP_DIR/scripts/common.sh
+source $MLSH_TOP_DIR/scripts/common.sh
 
 main() {
   local option=$1
@@ -32,8 +32,8 @@ main() {
         echo "Unknown option [$option]"
         echo "Please select an option [show-errors/search/follow]"
         echo "e.g."
-        echo "mulsh log show-errors"
-        cd $MULSH_TOP_DIR
+        echo "mlsh log show-errors"
+        cd $MLSH_TOP_DIR
         return
         ;;
 
@@ -61,7 +61,7 @@ main() {
       echo "Please select an option [show-errors/search/follow]"
       echo "e.g."
       echo "log show-errors"
-      cd $MULSH_TOP_DIR
+      cd $MLSH_TOP_DIR
       return
       ;;
   esac

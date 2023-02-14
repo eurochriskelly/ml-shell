@@ -1,11 +1,11 @@
 #!/bin/bash
 
 II() { echo "II $(date) $@"; }
-# script that only echos if $MULSH_DEBUG is set
-DD() { if [ -n "$MULSH_DEBUG" ]; then echo "DD $(date) $@"; fi; }
+# script that only echos if $MLSH_DEBUG is set
+DD() { if [ -n "$MLSH_DEBUG" ]; then echo "DD $(date) $@"; fi; }
 EE() { echo "EE $(date) $@"; }
 WW() { echo "WW $(date) $@"; }
-LL() { echo "$(date) $@" >> /tmp/mulsh.log; }
+LL() { echo "$(date) $@" >> /tmp/mlsh.log; }
 
 fetch() {
   local endpoint=$1
@@ -26,16 +26,16 @@ fetch() {
 doEval() {
   DD "Evaluating script [$1] against database [$2] with vars [$3]"
   local script=
-  local base=$MULSH_TOP_DIR/scripts/eval/${1}
+  local base=$MLSH_TOP_DIR/scripts/eval/${1}
   # Check if it exists in the scripts/eval directory
   if [[ -f "${base}.xqy" || -f "${base}.sjs" || -f "${base}.js" ]]; then
     if [ -f "${base}.xqy" ]; then
-      script=$MULSH_TOP_DIR/scripts/eval/${1}.xqy
+      script=$MLSH_TOP_DIR/scripts/eval/${1}.xqy
     else
       if [ -f "${base}.sjs" ]; then
-        script=$MULSH_TOP_DIR/scripts/eval/${1}.sjs
+        script=$MLSH_TOP_DIR/scripts/eval/${1}.sjs
       else
-        script=$MULSH_TOP_DIR/scripts/eval/${1}.js
+        script=$MLSH_TOP_DIR/scripts/eval/${1}.js
       fi
     fi
   fi
@@ -55,15 +55,15 @@ doEval() {
   fi
 
   if [ -z "$script" ]; then
-    DD "Script [$1] not found in $MULSH_TOP_DIR/scripts/eval or current directory."
-    ls $MULSH_TOP_DIR/scripts/eval
+    DD "Script [$1] not found in $MLSH_TOP_DIR/scripts/eval or current directory."
+    ls $MLSH_TOP_DIR/scripts/eval
     return 1
   else
     DD "Found matching script [$script]"
   fi
 
   if [ "$script" == "1" ]; then
-    DD "No script [$1] found in $MULSH_TOP_DIR/scripts/eval or ."
+    DD "No script [$1] found in $MLSH_TOP_DIR/scripts/eval or ."
     return 1
   fi
   LL Script : $script
@@ -122,9 +122,9 @@ mle() {
   fi
   local result=
   if [ -z "${params}" ];then
-    result=$($MULSH_CMD eval -s "${fname}.xqy")
+    result=$($MLSH_CMD eval -s "${fname}.xqy")
   else
-    result=$($MULSH_CMD eval -s "${fname}.xqy" -p "${params}")
+    result=$($MLSH_CMD eval -s "${fname}.xqy" -p "${params}")
   fi
   if [ -n "$(echo $result | grep 'Internal Server Error')" ];then
     echo "$result"

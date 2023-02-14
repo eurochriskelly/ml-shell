@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source $MULSH_TOP_DIR/scripts/common.sh
+source $MLSH_TOP_DIR/scripts/common.sh
 
 showHelp() {
-  echo "Usage: mulsh eval [options] <script> <database> <params>"
+  echo "Usage: mlsh eval [options] <script> <database> <params>"
   echo "Options:"
   echo "  -s|--script <script>   The script to run"
   echo "  -d|--database <database>   The database to run the script against"

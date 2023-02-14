@@ -8,15 +8,15 @@
 TS=$(date +%s)
 TODAY=$(date +%Y%m%d)
 QC_WORKDIR=$(pwd)
-source $MULSH_TOP_DIR/scripts/common.sh
+source $MLSH_TOP_DIR/scripts/common.sh
 
 main() {
   #
   # show banner with name and version of tool
   #
   echo "--------------------------------------------------"
-  echo "MULSH module loader"
-  echo "Version: $MULSH_VERSION"
+  echo "MLSH module loader"
+  echo "Version: $MLSH_VERSION"
   echo "--------------------------------------------------"
   echo ""
 
@@ -40,8 +40,8 @@ main() {
         echo "Unknown option [$option]"
         echo "Please select an option [find/load/reset]"
         echo "e.g."
-        echo "mulsh modules find"
-        cd $MULSH_TOP_DIR
+        echo "mlsh modules find"
+        cd $MLSH_TOP_DIR
         return
         ;;
     esac
@@ -74,7 +74,7 @@ main() {
       echo "Unknown option [$option]"
       echo "Please select an option [match/load]"
       echo "e.g."
-      echo "mulsh modules match"
+      echo "mlsh modules match"
       return
       ;;
   esac
@@ -133,7 +133,7 @@ findModules() {
     if [ -n "$(which tree)" ]; then
         tree $ddir
     fi
-    echo "Modified module in $ddir/edited and update using 'mulsh modules load'"
+    echo "Modified module in $ddir/edited and update using 'mlsh modules load'"
 }
 
 ##
@@ -178,7 +178,7 @@ loadModules() {
 
 initialize() {
     if [ -z "$ML_ENV" ]; then
-        echo "Please add 'source ~/.mulshrc' to your .bashrc or equivalent"
+        echo "Please add 'source ~/.mlshrc' to your .bashrc or equivalent"
         exit 1
     fi
 }

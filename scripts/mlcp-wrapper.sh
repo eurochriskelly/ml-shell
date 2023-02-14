@@ -100,7 +100,7 @@ interactive() {
       read -p "Prefix: " prefix
 
       # Show user selected options and ask for confirmation
-      echo "Will run command: " mulsh mlcp import --collections $collection --type $type --prefix $prefix
+      echo "Will run command: " mlsh mlcp import --collections $collection --type $type --prefix $prefix
       read -p "Continue? (y/n): " confirm
       if [ "$confirm" != "y" ]; then
         echo "Aborting"

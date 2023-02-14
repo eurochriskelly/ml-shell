@@ -1,44 +1,44 @@
 #!/bin/bash
 
-echo "Initializing mulsh..."
+echo "Initializing mlsh..."
 
-if [ ! -f "$HOME/.mulshrc" ]; then
-    echo "No ~/.mulshrc file found."
-    if [ ! -d "$HOME/.mulsh.d" ]; then
-        echo "mulsh not found in the default location of ~/.mulsh.d/mulsh"
-        echo "Please set MULSH_TOP_DIR in your ~/.mulshrc file."
+if [ ! -f "$HOME/.mlshrc" ]; then
+    echo "No ~/.mlshrc file found."
+    if [ ! -d "$HOME/.mlsh.d" ]; then
+        echo "mlsh not found in the default location of ~/.mlsh.d/mlsh"
+        echo "Please set MLSH_TOP_DIR in your ~/.mlshrc file."
         exit 1
     else
-        echo "Creating a default .mulshrc file in your home directory."
+        echo "Creating a default .mlshrc file in your home directory."
         echo "Please modify as needed."
-        cp ~/.mulsh.d/mulsh/mulshrc.template ~/.mulshrc
+        cp ~/.mlsh.d/mlsh/mlshrc.template ~/.mlshrc
     fi
 fi
 
 if [ -f "$(which dos2unix)" ];then
-    dos2unix ~/.mulshrc 2> /dev/null
-    for d in $(find ~/.mulsh.d/ -name "*.sh");do
+    dos2unix ~/.mlshrc 2> /dev/null
+    for d in $(find ~/.mlsh.d/ -name "*.sh");do
       dos2unix $d 2> /dev/null
     done
 fi
 
-source ~/.mulshrc
+source ~/.mlshrc
 
-export MULSH_VERSION="0.1.0"
-export MULSH_CMD="bash $MULSH_TOP_DIR/scripts/mulsh.sh"
-alias mulsh="$MULSH_CMD"
-alias mulsh:go="cd $MULSH_TOP_DIR"
+export MLSH_VERSION="0.1.0"
+export MLSH_CMD="bash $MLSH_TOP_DIR/scripts/mlsh.sh"
+alias mlsh="$MLSH_CMD"
+alias mlsh:go="cd $MLSH_TOP_DIR"
 
 ## shortcuts
  # wrappers
-alias mle="mulsh eval $@"
-alias mlm="mulsh mlcp $@"
-alias mlq="mulsh qc $@"
-alias mlc="mulsh corb $@"
-alias mlr="mulsh rest $@"
+alias mle="mlsh eval $@"
+alias mlm="mlsh mlcp $@"
+alias mlq="mlsh qc $@"
+alias mlc="mlsh corb $@"
+alias mlr="mlsh rest $@"
 
  # core commands
-alias mlu="mulsh update $@"
-alias mli="mulsh init $@"
+alias mlu="mlsh update $@"
+alias mli="mlsh init $@"
 
 echo "Ready!"

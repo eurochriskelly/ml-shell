@@ -5,7 +5,7 @@
 
 TS=$(date +%s)
 QC_WORKDIR=$(pwd)
-source $MULSH_TOP_DIR/scripts/common.sh
+source $MLSH_TOP_DIR/scripts/common.sh
 
 main() {
   #
@@ -13,7 +13,7 @@ main() {
   #
   echo "--------------------------------------------------"
   echo "Query Console sync tool"
-  echo "Version: $MULSH_VERSION"
+  echo "Version: $MLSH_VERSION"
   echo "--------------------------------------------------"
   echo ""
   if [ -z "$ML_HOST" ];then
@@ -38,7 +38,7 @@ main() {
         echo "Please select an option [push/pull/list]"
         echo "e.g."
         echo "mulsh qc push"
-        cd $MULSH_TOP_DIR
+        cd $MLSH_TOP_DIR
         return
         ;;
     esac
@@ -65,7 +65,7 @@ main() {
       echo "Please select an option [push/pull/list]"
       echo "e.g."
       echo "qc push"
-      cd $MULSH_TOP_DIR
+      cd $MLSH_TOP_DIR
       return
       ;;
   esac
@@ -238,7 +238,7 @@ processOptions() {
     mkdir -p "$dir"
     local fname="$dir/_workspace.xml"
     echo -n "" > $fname
-    echo "  Downloading workspace [$uri] to [${fname/$MULSH_TOP_DIR\//}]"
+    echo "  Downloading workspace [$uri] to [${fname/$MLSH_TOP_DIR\//}]"
     fetch "/v1/documents?uri=${uri}&database=${db}" "${opts[@]}" | sed '1d' >>"$fname"
   }
 
@@ -250,7 +250,7 @@ processOptions() {
       -X PUT -T "$fname"
     )
     local db="App-Services"
-    echo "  Uploading [${fname/$MULSH_TOP_DIR\//}] to [$uri]"
+    echo "  Uploading [${fname/$MLSH_TOP_DIR\//}] to [$uri]"
     fetch "/v1/documents?uri=${uri}&database=${db}" "${opts[@]}"
   }
 }
