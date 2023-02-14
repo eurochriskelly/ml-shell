@@ -33,18 +33,25 @@
  */
 
 // Optional externally provided parameters
-var FILTER, FLAGS, FORMAT, MINUTES, LAST_TIME, LOG_PATH, FOLLOW
+var FILTER, FLAGS, FORMAT, LOG_PATH, FOLLOW
+
+const test = () => {
+  //const LT = new LogTracker()
+  //const res = LT.getLogLines()
+
+  return ' foo bar bum'
+
+}
 
 // entry point
 const main = (fmt) => {
   // For testing from qconsole, override the following parameters
   if (xdmp.getRequestPath().toString().startsWith('/qconsole')) {
     // If running from QConsole, use the provided parameters
-    FILTER = 'foo'
-    FLAGS = 'no-eval+no-moz+no-saf+no-chrome'
-    FORMAT = 'json'
-    FOLLOW = true
-    MINUTES = 5
+    FILTER  = 'foo'
+    FLAGS   = 'no-eval+no-moz+no-saf+no-chrome'
+    FORMAT  = 'json'
+    FOLLOW  = true
   }
   const LT = new AccessLogTracker()
   if (LOG_PATH) LT.logPath = LOG_PATH
@@ -53,33 +60,22 @@ const main = (fmt) => {
 }
 
 /**
- * Base class for scannning log files
+ * Base class for scannning log files and tracking position.
  */
 class LogTracker {
-  constructor(lastTime, minutesAgo) {
-    this.lastTime = this.getLastTime(lastTime, minutesAgo)
-    this.logData = [] // Data gather during this transaction are stored here.
 
+  constructor() {
+    this.logData = [] // Data gather during this transaction are stored here.
+    this.serverField = JSON.parse()
+    this.hosts = Array.from(xdmp.hosts()).map(xdmp.hostName)
     // Cursors point to last location in all files scans
     // This is the fastest way to process only recent changes
-    this.cursors = []
-  }
-  // Get the last time, preferrably using the server field to enable simple
-  // tailing for client
-  getLastTime(lastTime, minutesAgo = 5) {
-    const addMinutes = (date, minutes) => new Date(date.getTime() + (minutes * 60000))
-    if (!lastTime) {
-      // At worst it will scan the entire log for current day
-      let storedTime = getServerField(this.lastTimeServerField)
-      let lastTime = storedTime ? new Date(storedTime) : new Date()
-      const res = addMinutes(lastTime, storedTime ? 0.0001 : -minutesAgo).toISOString()
-      return res
-    }
-    return lastTime
+    const sf = getServerField('LOG_CURSORS')
+    this.cursors = sf ? JSON.parse(sf) : this.hosts.map(h => ({host: h, logs: []}))
   }
 
-  // Set the last time to the current time
   set logPath(path) { this._logPath = path }
+
   // Get the log path. Use sensible defaults if no override is provided
   get logPath() {
     return this._logPath || platform() === 'winnt'
@@ -87,18 +83,29 @@ class LogTracker {
       : '/var/opt/MarkLogic/Logs'
   }
 
-  set fileNameEnding(str) {
-    this._fileNameEnding = str
-  }
+  set fileNameEnding(str) { this._fileNameEnding = str }
 
   // Get the lines of logs from where we last left off
   get logLines() {
-    return Array
+    return Array.from(xdmp.hosts()).map(xdmp.hostName).map(host => Array
       .from(filesystemDirectory(this.logPath))
       // search only the current logs
       .filter(x => x.filename.endsWith(this._fileNameEnding) && x.contentLength !== 0)
       .map(x => x.pathname)
-      .map(x => filesystemFile(x).toString().split('\n'))
+      .map(x => {
+        return {
+          path: x,
+          lineNumber: this[host][x],
+        }
+      })
+      .map(x => {
+        const lines = filesystemFile(x).toString().split('\n')
+        const startFrom = x.lineNumber || lines.length - 200
+        this[host][x.path] = lines.length
+        return lines.slice(startFrom)
+          .map(x => ({host, line: x}))
+      }))
+      .reduce((p, n) => [...p, ...n], [])
   }
 
   // Extract the date as formated by the access log
@@ -117,10 +124,14 @@ class LogTracker {
  * LogTracker class
  */
 class AccessLogTracker extends LogTracker {
-
-  constructor(lastTime, minutesAgo) {
-    this.lastTimeServerField = 'ACCESSLOG_LAST_TIME'
-    super(lastTime, minutesAgo)
+  static filterFlags = {
+     'no-eval': 'POST /v1/eval ',
+     'no-moz': 'Mozilla',
+     'no-saf': 'Safari',
+     'no-chrome': 'Chrom' // Chrome, Chromium, Chrome Mobil
+  }
+  constructor() {
+    super()
     this.type = 'access'
     this.fileNameEnding = `_AccessLog.txt`
   }
@@ -129,14 +140,10 @@ class AccessLogTracker extends LogTracker {
   processLog(filter, flags = '') {
     this.flags = flags.split('+').filter(x => x)
     this.logData = this.logLines
-        .filter(x => {
-          if (flags.includes('no-eval')) return !x.includes('POST /v1/eval ')
-          if (flags.includes('no-moz')) return !x.includes('Mozilla')
-          if (flags.includes('no-saf')) return !x.includes('Safari')
-          if (flags.includes('no-chrome')) return !x.includes('Chrom') // Chrome, Chromium, Chrome Mobile
-          return true
-        })
-        .filter(x => x)
+        .filter(x => x.trim())
+        .filter(x => Object.keys(AccessLogTracker.filterFlags).some(flag =>
+          x.includes(AccessLogTracker.filterFlags[flag])
+        ))
         .map(x => ({
           date: LogTracker.extractDate(x),
           rest: x.split(']').slice(1).join(']').replace(/\"/g, ''),
@@ -144,14 +151,12 @@ class AccessLogTracker extends LogTracker {
           user: x.split('-')[1].trim().split(' ').shift().trim() || '-',
           line: x
         }))
-        .filter(x => x.date > this.lastTime)
         .filter(x => filter ? x.includes(filter) : true)
       .reduce((p, n) => [...p, ...n], [])
 
     // Record timestamp of last log entry
     if (this.logData.length) {
       const lastTime = this.logData[this.logData.length - 1].date
-      setServerField(this.lastTimeServerField, lastTime)
     }
   }
 
@@ -185,4 +190,5 @@ const {
   unquote, logfileScan, getServerField, setServerField
 } = xdmp
 
-main('csv')
+//main('csv')
+test('csv')
