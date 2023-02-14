@@ -3,13 +3,13 @@
  */
 
 // external vars
-var MINUTES, PATTERN, DAY, TIME, INITIALIZE
+var MINUTES, PATTERN, DAY, TIME, INITIALIZE, TYPE
 
 // functions
 const { filesystemDirectory, unquote, logfileScan } = xdmp
 
 if (INITIALIZE && INITIALIZE === '1') {
-  console.log(`Starting to follow logs...`)
+  console.log(`Starting to follow [${TYPE||'ErrorLog'}] logs...`)
 } else {
   let useTime
 
@@ -31,10 +31,11 @@ if (INITIALIZE && INITIALIZE === '1') {
     ? '/Program Files/MarkLogic/Data/Logs'
     : '/var/opt/MarkLogic/Logs'
 
+  if (!TYPE) TYPE = 'ErrorLog'
   const lines = Array
     .from(filesystemDirectory(`${logPath}`))
     // search only the current logs
-    .filter(x => x.filename.endsWith('_ErrorLog.txt') && x.contentLength !== 0)
+    .filter(x => x.filename.endsWith(`_${TYPE}.txt`) && x.contentLength !== 0)
     .map(x => x.pathname)
     .map(x => logfileScan(x, PATTERN, null, useTime))
     .map(x => x.toString())
@@ -43,4 +44,3 @@ if (INITIALIZE && INITIALIZE === '1') {
 
   lines
 }
-
