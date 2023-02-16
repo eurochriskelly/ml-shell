@@ -219,8 +219,8 @@ deployModule() {
     URL="${BASE_URL}"
     URL="${URL}uri=${dest}&"
     URL="${URL}database=${ML_MODULES_DB}&"
-    URL="${URL}${perms}&"
-    URL="${URL}${cols}&"
+    URL="${URL}${perms}"
+    URL="${URL}&${cols}"
     if $reset;then
         URL="${URL}" # no extra collections
     else
@@ -228,7 +228,9 @@ deployModule() {
         URL="${URL}collection=/mod/devel/${TODAY}&"
         URL="${URL}collection=/mod/update&"
     fi
+    set -o xtrace
     curl "${putOpts[@]}" "$URL"
+    set +o xtrace
     if $reset;then
       II "  Reset module [$dest]"
     else
