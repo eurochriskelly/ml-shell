@@ -55,7 +55,7 @@ doEval() {
   fi
 
   if [ -z "$script" ]; then
-    DD "Script [$1] not found in $MLSH_TOP_DIR/scripts/eval or current directory."
+    WW "Script [$1] not found in $MLSH_TOP_DIR/scripts/eval or current directory."
     ls $MLSH_TOP_DIR/scripts/eval
     return 1
   else

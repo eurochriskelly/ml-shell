@@ -21,7 +21,7 @@ mlsh() {
       ;;
 
     # Wrappers
-    eval)
+    ev|eval)
       bash $MLSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
