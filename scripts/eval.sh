@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source $MLSH_TOP_DIR/scripts/common.sh
+LAST_SCRIPT=
 
 showHelp() {
   echo "Usage: mlsh eval [options] <script> <database> <params>"
@@ -80,26 +81,38 @@ run() {
 interactivelyRunScriptsInDir() {
   # get xqy, js, and sjs files
   local database=$1
-  local scripts=$(ls -1 *.xqy *.js *.sjs | sort)
+  local scripts=$(ls -1 *.xqy *.js *.sjs 2> /dev/null | sort)
   echo "Scripts in current directory:"
   i=1
   for s in $scripts; do
     echo "  ${i}. $s"
     i=$((i + 1))
   done
-  echo -n "Select a script or choose an option [Database/Params/eXit]: "
+  local extra=
+  if [ -n "$LAST_SCRIPT" ];then extra="press ENTER to re-run ($LAST_SCRIPT),";fi
+  echo -n "Select a script, ${extra} or choose an option [Database/Params/eXit]: "
   read choice
-  if [ $choice == "x" ]; then
+  if [ "$choice" == "x" ]; then
     exit 0
   fi
-  # split choice into 2 parts
-  local scriptNum=$(echo $choice | cut -d' ' -f1)
-  local params=$(echo $choice | cut -d' ' -f2)
-  if [ -n "$params" ]; then
-    params=$(toJson $params)
+
+  if [ -z "$choice" ];then
+    # if user pressed enter, re-run last script
+    script=$LAST_SCRIPT
+    if [ -z "$script" ];then
+      echo "Nothing selected and no previous script ran. Exiting"
+      exit 0
+    fi
+  else
+    # split choice into 2 parts
+    local scriptNum=$(echo $choice | cut -d' ' -f1)
+    local params=$(echo $choice | cut -d' ' -f2)
+    if [ -n "$params" ]; then
+      params=$(toJson $params)
+    fi
+    local script=$(echo $scripts | cut -d' ' -f$scriptNum)
   fi
 
-  local script=$(echo $scripts | cut -d' ' -f$scriptNum)
   if [ -z $script ]; then
     echo "No script selected"
     exit 1
@@ -111,6 +124,7 @@ interactivelyRunScriptsInDir() {
   clear
   echo "ML EVAL DB [$database]."
   echo RUNNING: doEval $script $database $params
+  LAST_SCRIPT=$script
   # calculate elapsed time
   start=$(date +%s)
   echo "----------------------------------------"
