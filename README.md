@@ -58,7 +58,6 @@ The following table list the main features:
 |qc       |Push and pull workspaces from database     |
 |modules  |Download modules, edit, load & reset state |
 |eval     |Evaluate a locally stored script           |
-|mlcp     |Mlcp wrapper                               |
 
 # Usage
 
