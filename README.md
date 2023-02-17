@@ -1,10 +1,10 @@
 # mlsh
 
 `mlsh` (MarkLogic shell) is a command-line, "swiss-army knife" for
-interacting with and developing MarkLogic Application. It is
-developed lowest-common-denominator tool, (fully written in
-bash), and preloaded in your user environment where it can be used
-across projects, regardless of build system.
+interacting with and developing MarkLogic Application. It is intended
+as a lowest-common-denominator tool, (fully written in bash), and
+preloaded in your user environment where it can be used across
+projects, regardless of build system.
 
 `mlsh` commands can be run with known parameters and scripted. However,
 if no parameters are provided, the will run interactively. See #Usage below.>
