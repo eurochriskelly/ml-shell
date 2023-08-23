@@ -1,6 +1,9 @@
 #!/bin/bash
 
+echo $ML_ENV
 source $MLSH_TOP_DIR/scripts/common.sh
+
+echo $ML_ENV
 
 mlsh() {
   local cmd=$1
@@ -14,6 +17,10 @@ mlsh() {
 
     init)
       source $MLSH_TOP_DIR/init.sh
+      ;;
+
+    env)
+      bash $MLSH_TOP_DIR/scripts/config.sh
       ;;
 
     help)
@@ -156,7 +163,7 @@ showHelp() {
       echo ""
       echo "Commands:"
       echo " mlsh init                                       # source this file"
-      echo " mlsh config                                     # configure current state (e.g. environment, database)"
+      echo " mlsh env                                        # show the current environment"
       echo " mlsh update                                     # update mlsh from github (zip)"
       echo " mlsh qc [list|pull|push]                        # list workspaces/pull/push from/to query console"
       echo " mlsh log [OPTIONS]                              # show log for database"

@@ -191,6 +191,7 @@ deployModule() {
     local perms=$3
     local cols=$4
     local reset=$5
+    DD "$ML_PROTOCOL"
     local URL=
     BASE_URL="${ML_PROTOCOL}://${ML_HOST}:8000/v1/documents?"
     URL="${BASE_URL}uri=${dest}&"

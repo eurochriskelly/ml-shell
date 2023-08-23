@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initializing mlsh..."
+echo "Initializing mlsh ..."
 
 if [ ! -f "$HOME/.mlshrc" ]; then
     echo "No ~/.mlshrc file found."
@@ -15,6 +15,7 @@ if [ ! -f "$HOME/.mlshrc" ]; then
     fi
 fi
 
+# Convert line endings to unix format if dos2unix is installed
 if [ -f "$(which dos2unix)" ];then
     dos2unix ~/.mlshrc 2> /dev/null
     for d in $(find ~/.mlsh.d/ -name "*.sh");do
