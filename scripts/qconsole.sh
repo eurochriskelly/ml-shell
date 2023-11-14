@@ -5,6 +5,7 @@
 
 TS=$(date +%s)
 QC_WORKDIR=$(pwd)
+source $HOME/.mlshrc
 source $MLSH_TOP_DIR/scripts/common.sh
 
 main() {

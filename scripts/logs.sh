@@ -75,7 +75,7 @@ showErrors() {
     read minutes
   fi
   echo "Searching for errors in the past [$minutes] minutes"
-  local results=$(doEval showErrors "${ML_MODULES_DB}" '{"MINUTES": "'$minutes'"}')
+  local results=$(doEval showErrors "${ML_MODULES_DB}" '{"MINUTES":"$minutes"}')
   echo $results
 }
 

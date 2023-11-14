@@ -113,6 +113,30 @@ toJson() {
   echo $json
 }
 
+to_json() {
+  local input_str="$1"
+  local first=true
+
+  echo -n "{"
+
+  IFS=',' read -ra pairs <<< "$input_str"
+  for pair in "${pairs[@]}"; do
+    IFS='=' read -ra kv <<< "$pair"
+    key="${kv[0]}"
+    value="${kv[1]}"
+
+    if [ "$first" = true ]; then
+      first=false
+    else
+      echo -n ","
+    fi
+
+    echo -n "\"$key\":\"$value\""
+  done
+
+  echo "}"
+}
+
 # Common functions
 mle() {
   local fname=$1
