@@ -179,6 +179,14 @@ processOptions() {
         echo "Try renaming the /local folder/ or /workspace/ so they match."
         echo "Alternatively, import the /_workspace.xml/ to query console."
         echo""
+      else
+        if [ -n "$(which osascript)" ];then
+          fpath="$(pwd)/_workspace.xml"
+          if [ -f "$fpath" ];then
+            echo "Copying [workspace.xml] to clipboard for easy transfer"
+            osascript -e "set the clipboard to \"$fpath\" as «class furl»"
+          fi
+        fi
       fi
     else
       echo "No workspace selected!"
