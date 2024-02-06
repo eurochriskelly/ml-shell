@@ -1,9 +1,6 @@
 #!/bin/bash
 
-echo $ML_ENV
 source $MLSH_TOP_DIR/scripts/common.sh
-
-echo $ML_ENV
 
 mlsh() {
   local cmd=$1
@@ -20,7 +17,7 @@ mlsh() {
       ;;
 
     env)
-      bash $MLSH_TOP_DIR/scripts/config.sh
+      bash $MLSH_TOP_DIR/scripts/config.sh "$@"
       ;;
 
     help)

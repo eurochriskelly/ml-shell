@@ -5,7 +5,14 @@
 
 TS=$(date +%s)
 QC_WORKDIR=$(pwd)
-source $HOME/.mlshrc
+if [ -f "$HOME/.mlshrc-gen" ];then
+  echo "Found gen ..."
+  cat $HOME/.mlshrc-gen
+  source $HOME/.mlshrc-gen
+else
+  echo "no gen"
+  source $HOME/.mlshrc
+fi
 source $MLSH_TOP_DIR/scripts/common.sh
 
 main() {
@@ -15,6 +22,7 @@ main() {
   echo "--------------------------------------------------"
   echo "Query Console sync tool"
   echo "Version: $MLSH_VERSION"
+  echo "Environment: $ML_ENV"
   echo "--------------------------------------------------"
   echo ""
   if [ -z "$ML_HOST" ];then

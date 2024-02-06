@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initializing mlsh ..."
+echo "Initializing mlsh ... "
 
 if [ ! -f "$HOME/.mlshrc" ]; then
     echo "No ~/.mlshrc file found."
@@ -23,7 +23,11 @@ if [ -f "$(which dos2unix)" ];then
     done
 fi
 
-source ~/.mlshrc
+if [ -f ~/.mlshrc-gen ];then
+  source ~/.mlshrc-gen
+else
+  source ~/.mlshrc
+fi
 
 export MLSH_VERSION="0.1.0"
 export MLSH_CMD="bash $MLSH_TOP_DIR/scripts/mlsh.sh"
