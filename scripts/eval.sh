@@ -81,7 +81,7 @@ run() {
 interactivelyRunScriptsInDir() {
   # get xqy, js, and sjs files
   local database=$1
-  local scripts=$(ls -1 *.xqy *.js *.sjs 2> /dev/null | sort)
+  local scripts=$(ls -1 *.xqy *.js *.sjs 2>/dev/null | sort)
   echo "Scripts in current directory:"
   i=1
   for s in $scripts; do
@@ -89,17 +89,17 @@ interactivelyRunScriptsInDir() {
     i=$((i + 1))
   done
   local extra=
-  if [ -n "$LAST_SCRIPT" ];then extra="press ENTER to re-run ($LAST_SCRIPT),";fi
+  if [ -n "$LAST_SCRIPT" ]; then extra="press ENTER to re-run ($LAST_SCRIPT),"; fi
   echo -n "Select a script, ${extra} or choose an option [Database/Params/eXit]: "
   read choice
   if [ "$choice" == "x" ]; then
     exit 0
   fi
 
-  if [ -z "$choice" ];then
+  if [ -z "$choice" ]; then
     # if user pressed enter, re-run last script
-    script=$LAST_SCRIPT
-    if [ -z "$script" ];then
+    script=${LAST_SCRIPT}
+    if [ -z "$script" ]; then
       echo "Nothing selected and no previous script ran. Exiting"
       exit 0
     fi
@@ -117,14 +117,19 @@ interactivelyRunScriptsInDir() {
     echo "No script selected"
     exit 1
   fi
-  echo "Using script [$script]"
   # remove extension from variable $script
   # FIXME: this should be done inside doEval
+  extension=$LAST_EXTENSION
+  if [ "$script" != "${script%.*}" ]; then
+    extension=${script##*.}
+  fi
   script=${script%.*}
+  database="$(checkForDatabaseOverride $script $extension $database)"
   clear
   echo "ML EVAL DB [$database]."
   echo RUNNING: doEval $script $database $params
   LAST_SCRIPT=$script
+  LAST_EXTENSION=$extension
   # calculate elapsed time
   start=$(date +%s)
   echo "----------------------------------------"
@@ -134,6 +139,25 @@ interactivelyRunScriptsInDir() {
   elapsed=$((end - start))
   echo "Elapsed time: $elapsed seconds"
   echo ""
+}
+
+checkForDatabaseOverride() {
+  local script=$1
+  local extension=$2
+  local database=$3
+  local predb=$database
+  if [ ! -f $script ]; then
+    script=${script}.${extension}
+  fi
+  # if the script contains "@MLSH" in the first 10 lines, parse it for the database name
+  # the string should look like this: @MLSH:database=Documents where Documents in the value of the database override
+  if [ -n "$(head -n 10 $script | grep "@MLSH:database=")" ]; then
+    database=$(head -n 10 $script | grep "@MLSH:database=" | cut -d'=' -f2 | cut -d' ' -f1)
+    if [ "$database" != "" ]; then
+      LL "Found database override [$database] in script [$script]. Using that instead of [$predb]."
+    fi
+  fi
+  echo "$database"
 }
 
 run $@
