@@ -133,7 +133,16 @@ interactivelyRunScriptsInDir() {
   # calculate elapsed time
   start=$(date +%s)
   echo "----------------------------------------"
-  doEval $script $database $params
+  result="$(doEval $script $database $params)"
+  echo "$result" | while read -r line; do
+    # echo the line but truncate to 200 characters if it's more than that
+    # Add ... at the end if the line has been truncated
+    if [ ${#line} -gt 200 ]; then
+      echo "  ${line:0:200} ... (long line truncated)"
+    else
+      echo "  $line"
+    fi
+  done
   echo "----------------------------------------"
   end=$(date +%s)
   elapsed=$((end - start))
