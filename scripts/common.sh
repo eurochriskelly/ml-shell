@@ -79,6 +79,12 @@ doEval() {
   local response=$(fetch "/v1/eval" "${opts[@]}")
   LL "$response"
   # Cleanup the response
+  echo "$response" > /tmp/mlsh-eval.out
+  # if response is > 50 lines, reduce to 50 lines and add a line "See /tmp/mlsh-eval.out for full response"
+  local numLines=$(echo "$response" | wc -l)
+  if [ $numLines -gt 50 ]; then
+    response="$(echo "$response" | head -n 50) ... See /tmp/mlsh-eval.out for full response"
+  fi
   while read -r line; do
     local c2=$(echo $line|cut -c1-2|sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     case "$c2" in
