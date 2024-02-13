@@ -134,6 +134,14 @@ interactivelyRunScriptsInDir() {
   start=$(date +%s)
   echo "----------------------------------------"
   result="$(doEval $script $database $params)"
+  echo "$result" > /tmp/mlsh-eval.out
+  local numLines=$(echo "$result" | wc -l)
+  LL "Output temporarily stored in /tmp/mlsh-eval.out"
+  # in the terminal we want to truncate the response to 50 lines
+  # The full response should be view with a better tool (e.g. vim, emacs)
+  if [ $numLines -gt 50 ]; then
+    result="$(echo "$result" | head -n 50)n\\nSee /tmp/mlsh-eval.out for full response"
+  fi
   echo "$result" | while read -r line; do
     # echo the line but truncate to 200 characters if it's more than that
     # Add ... at the end if the line has been truncated
@@ -158,10 +166,10 @@ checkForDatabaseOverride() {
   if [ ! -f $script ]; then
     script=${script}.${extension}
   fi
-  # if the script contains "@MLSH" in the first 10 lines, parse it for the database name
-  # the string should look like this: @MLSH:database=Documents where Documents in the value of the database override
-  if [ -n "$(head -n 10 $script | grep "@MLSH:database=")" ]; then
-    database=$(head -n 10 $script | grep "@MLSH:database=" | cut -d'=' -f2 | cut -d' ' -f1)
+  # if the script contains "@DEFAULTS" in the first 10 lines, parse it for the database name
+  # the string should look like this: @DEFAULTS:database=Documents where Documents in the value of the database override
+  if [ -n "$(head -n 10 $script | grep "@DEFAULTS:database=")" ]; then
+    database=$(head -n 10 $script | grep "@DEFAULTS:database=" | cut -d'=' -f2 | cut -d' ' -f1)
     if [ "$database" != "" ]; then
       LL "Found database override [$database] in script [$script]. Using that instead of [$predb]."
     fi
