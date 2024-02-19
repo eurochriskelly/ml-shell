@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source $MLSH_TOP_DIR/scripts/common.sh
-test -f $MLSH_TOP_DIR/.mlshrc-gen && source $MLSH_TOP_DIR/.mlshrc-gen
+test -f $HOME/.mlshrc-gen && source $HOME/.mlshrc-gen
 mlsh() {
   local cmd=$1
   shift
@@ -10,7 +10,13 @@ mlsh() {
     echo "No environment selected. Please run 'mlsh env'"
     exit 0
   fi
-  echo "MLSH - Current env [$ML_ENV]"
+  clear
+  # Define color codes
+  fM='\033[35m' # Foreground Magenta
+  bM='\033[45m' # Background Magenta
+  white='\033[97m' # White
+  end='\033[0m' # End of color string
+  echo -e "${bM}${white}MLSH${end}${fM} - Current env [${end}${white}$ML_ENV${end}${fM}]${end}"
   case $cmd in
     # Core commands
     update)
@@ -51,15 +57,7 @@ mlsh() {
       ;;
 
     corb)
-      if [ ! -f "$CORB_JAR" ]; then
-        echo "Please set CORB_JAR in your ~/.mlshrc file."
-        return
-      fi
-      if [ ! -f "$XCC_JAR" ]; then
-        echo "Please set XCC_JAR in your ~/.mlshrc file."
-        return
-      fi
-      runCorb "${args[@]}"
+      bash $MLSH_TOP_DIR/scripts/corb-wrapper.sh "${args[@]}"
       ;;
 
     *)
