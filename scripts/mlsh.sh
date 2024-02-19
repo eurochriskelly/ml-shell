@@ -57,15 +57,7 @@ mlsh() {
       ;;
 
     corb)
-      if [ ! -f "$CORB_JAR" ]; then
-        echo "Please set CORB_JAR in your ~/.mlshrc file."
-        return
-      fi
-      if [ ! -f "$XCC_JAR" ]; then
-        echo "Please set XCC_JAR in your ~/.mlshrc file."
-        return
-      fi
-      runCorb "${args[@]}"
+      bash $MLSH_TOP_DIR/scripts/corb-wrapper.sh "${args[@]}"
       ;;
 
     *)
