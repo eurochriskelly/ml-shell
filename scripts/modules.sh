@@ -26,16 +26,18 @@ main() {
   # TODO: prep by backing up modules database
   if [ -z "$option" ]; then
     # Ask user to select from known options
-    echo "Please select from the following options:"
-    echo "1. find"
-    echo "2. load"
-    echo "3. reset"
+    echo "Select option:"
+    echo "1. find     | in modules database"
+    echo "2. load     | documents modified locally"
+    echo "3. clone    | make a copy of a downloaded module with a new name"
+    echo "4. reset    | to original state"
     echo -n "Enter your choice: "
     read choice
     case $choice in
       1) option="find" ;;
       2) option="load" ;;
-      3) option="reset" ;;
+      3) option="clone" ;;
+      4) option="reset" ;;
       *)
         echo "Unknown option [$option]"
         echo "Please select an option [find/load/reset]"
@@ -54,7 +56,7 @@ main() {
       local pattern=$1
       if [ -z "$pattern" ]; then
         echo -n "Please enter a pattern to match (e.g. *foo.xqy): "
-        read $pattern
+        read pattern
       fi
       echo "Searching for modules matching [$pattern]"
       findModules "$pattern"
@@ -63,6 +65,11 @@ main() {
     # Load one or more locally edit modules into the database
     load|update)
       loadModules
+      ;;
+
+    # Take a copy of a local file for upload to a new name
+    clone)
+      cloneModule
       ;;
 
     # Reset the modules database
@@ -79,6 +86,54 @@ main() {
       ;;
   esac
 }
+
+# Clone a local file for upload to a new name
+cloneModule() {
+  echo "Choose a file to clone"
+  local ddir=modules_${TODAY} # one directory for a given day is plenty
+  local i=1
+  cat $ddir/module-info.txt| while read -r line; do
+    local uri=$(echo $line | awk -F~ '{print $1}' )
+    local localName=$(echo $line | awk -F~ '{print $2}' )
+    echo "  ${i} $uri"
+    i=$((i+1))
+  done
+  echo "Enter a number to clone: "
+  # Get the choice as a number or exit
+  local choice_is_not_numeric=true
+  while "$choice_is_not_numeric";do
+    read choice
+    # if choice is empty, exit
+    if [ -z "$choice" ]; then
+      return
+    fi
+    # check if the input is a number
+    if [[ $choice =~ ^[0-9]+$ ]]; then
+      choice_is_not_numeric=false
+    else
+      echo "Please enter a number"
+    fi
+
+  done
+
+  # get the choice from the list (column 1)
+  local line=$(cat $ddir/module-info.txt | head -n $choice | tail -n 1 )
+  local uri=$(echo "$line"| awk -F~ '{print $1}' )
+  local basename=$(basename $uri)
+  echo "Enter a new name (e.g. foo.xqy): "
+  read newname   # replace $basename in $line with $newname
+  local newLine=$(echo $line | sed "s/$basename/$newname/g")
+  echo "$newLine" >> $ddir/module-info.txt
+   # Now start to rename the file and take a copy
+  local fname=$(echo "$line"| awk -F~ '{print $2}' )
+  local fnameNew=$(echo $fname | sed "s/$basename/$newname/")
+
+  cp $ddir/originals/$fname $ddir/originals/$fnameNew
+  cp $ddir/originals/$fname $ddir/edited/$fnameNew
+  echo "Cloned [$fname] to [$fnameNew]"
+  test -n $(which tree) && tree $ddir
+}
+
 
 # Find matching modules in the database and download if required
 findModules() {

@@ -1,11 +1,16 @@
 #!/bin/bash
 
 source $MLSH_TOP_DIR/scripts/common.sh
-
+test -f $MLSH_TOP_DIR/.mlshrc-gen && source $MLSH_TOP_DIR/.mlshrc-gen
 mlsh() {
   local cmd=$1
   shift
   local args=($@)
+  if [ -z "$ML_ENV" ];then
+    echo "No environment selected. Please run 'mlsh env'"
+    exit 0
+  fi
+  echo "MLSH - Current env [$ML_ENV]"
   case $cmd in
     # Core commands
     update)
@@ -33,7 +38,7 @@ mlsh() {
       bash $MLSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
       ;;
 
-    mod|modules)
+    mod|module|modules)
       bash $MLSH_TOP_DIR/scripts/modules.sh "${args[@]}"
       ;;
 
