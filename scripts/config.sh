@@ -25,6 +25,13 @@ main() {
     # Export the variable to the output file
     echo "export $var_name=\"$var_value\"" >> "$output_file"
   done
+
+  # Fixed vars:
+  echo "export CORB_JAR=$CORB_JAR" >> "$output_file"
+  echo "export MLSH_TOP_DIR=$MLSH_TOP_DIR" >> "$output_file"
+  echo "export XCC_JAR=$XCC_JAR" >> "$output_file"
+  echo "export MLCP_PATH=$MLCP_PATH" >> "$output_file"
+
   chmod +x "$output_file"
 
   if [ -n "$env" ];then

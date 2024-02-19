@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source $MLSH_TOP_DIR/scripts/common.sh
-test -f $MLSH_TOP_DIR/.mlshrc-gen && source $MLSH_TOP_DIR/.mlshrc-gen
+test -f $HOME/.mlshrc-gen && source $HOME/.mlshrc-gen
 mlsh() {
   local cmd=$1
   shift
