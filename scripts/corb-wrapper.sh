@@ -131,7 +131,7 @@ previewJobProperties() {
   grep -v '^#\|^$' ${job}.corb| sort
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
   echo ""
-  echo -n "Would you like to edit? "
+  echo -n "Press 'e' to edit or any key to continue ... "
   read -n 1 answer
   echo ""
   if [[ $answer == [Yy] ]]; then
@@ -165,6 +165,7 @@ prepJob() {
     i=$((i + 1))
   done
   echo -e $jobs
+  echo ""
   echo -n "Select job to run or press ENTER to create a new job: "
   read choice
   if [ -z "$choice" ];then
@@ -180,69 +181,6 @@ prepJob() {
     i=$((i + 1))
   done
   previewJobProperties
-  now="$(date +%s)"
-  main $job $now
-  # Ask user if they want to preview the output file
-  rep=./corb-output-${job}-${now}.log
-  echo -ne "\nPreview the output file [$rep]? [y/n] "
-  read -n 1 answer
-  if [[ $answer == [Yy] ]]; then
-      $EDITOR $rep
-  fi
-
-  rep=./corb-report-${job}-${now}.txt
-  if [ -f "$rep" ];then
-    echo -ne "\nPreview the report file [$rep]? [y/n] "
-    read -n 1 answer
-    if [[ $answer == [Yy] ]]; then
-        $EDITOR $rep
-    fi
-  fi
-  mkdir -p corbLogs
-  mv corb-report*.txt corbLogs
-  mv corb-output*.log corbLogs
-  if [ -z "$(find . -name "*.corb" -type f -maxdepth 1)" ]; then
-    echo "No corb properties files found in the current folder. "
-    setupJob
-    exit 1
-  fi
-
-  echo "Available jobs:"
-  # List all corb properties files in the current folder and get the user to select one
-  # by number. Assign theselected to the variable $job
-  i=1
-  jobs=""
-  for f in $(find . -name "*.corb" -type f -maxdepth 1); do
-    jobs="$jobs\n$i) $(basename ${f%.corb})"
-    i=$((i + 1))
-  done
-  echo -e $jobs
-  echo -n "Select job to run or press ENTER to create a new job: "
-  read choice
-  if [ -z "$choice" ];then
-    setupJob
-    exit 0
-  fi
-  # loop over choices and selec the one match # $choice
-  i=1
-  for f in $(find . -name "*.corb" -type f -maxdepth 1); do
-    if [ "$i" == "$choice" ]; then
-      job=$(basename ${f%.corb})
-    fi
-    i=$((i + 1))
-  done
-  # preview the corb properties file
-  echo "Job properties [${job}.corb]:"
-  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  grep -v '^#\|^$' ${job}.corb| sort
-  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  echo ""
-  echo -n "Would you like to edit? "
-  read -n 1 answer
-  echo ""
-  if [[ $answer == [Yy] ]]; then
-      $EDITOR ${job}.corb
-  fi
   now="$(date +%s)"
   main $job $now
   # Ask user if they want to preview the output file
