@@ -16,7 +16,7 @@ mlsh() {
   bM='\033[45m' # Background Magenta
   white='\033[97m' # White
   end='\033[0m' # End of color string
-  echo -e "${bM}${white}MLSH${end}${fM} - Current env [${end}${white}$ML_ENV${end}${fM}]${end}"
+  echo -e "${bM}${white} MLSH$ ${end}${fM} - Current env [${end}${white}$ML_ENV${end}${fM}]${end}"
   case $cmd in
     # Core commands
     update)
@@ -65,6 +65,8 @@ mlsh() {
       showHelp
       ;;
   esac
+
+  echo -e "${bM}+${end}"
 }
 
 showHelp() {

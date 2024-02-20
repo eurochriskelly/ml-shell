@@ -61,7 +61,7 @@ initialize() {
 pickAFile() {
   local fileTypes=("*.xqy" "*.js" "*.sjs")
   local files=() # Array to hold all matching files
-  local i=1 # Index for numbering files
+  local i=1      # Index for numbering files
   local choice
 
   # Save the current screen and cursor position
@@ -94,30 +94,25 @@ pickAFile() {
   fi
 }
 
-jobWizardJob() {
-  local job=$1
-  echo "Creating job [$job]..."
-  local jf="${job}.corb"
-  touch $jf
-  pickAFile "Pick collect module: "
-  local collectMod=$PICK_A_FILE_CHOICE
-  pickAFile "Pick process module: "
-  local processMod=$PICK_A_FILE_CHOICE
-  echo "URIS-MODULE=${collectMod}|ADHOC" >> $jf
-  echo "PROCESS-MODULE=${processMod}|ADHOC" >> $jf
-  echo "BATCH-SIZE=1" >> $jf
-  echo "THREAD-COUNT=4" >> $jf
-  echo "Job [$job] created."
-  previewJobProperties
-  # Run the job
-  echo "Corb job created. Please switch to the folder [corb/job_${job}] and run 'mlsh corb' again"
-}
-
 setupJob() {
   echo -n "Please provide a job or type a name to create one: "
   read job
   if [ -n "$job" ]; then
-    jobWizardJob $job
+    echo "Creating job [$job]..."
+    local jf="${job}.corb"
+    touch $jf
+    pickAFile "Pick collect module: "
+    local collectMod=$PICK_A_FILE_CHOICE
+    pickAFile "Pick process module: "
+    local processMod=$PICK_A_FILE_CHOICE
+    echo "URIS-MODULE=${collectMod}|ADHOC" >>$jf
+    echo "PROCESS-MODULE=${processMod}|ADHOC" >>$jf
+    echo "BATCH-SIZE=1" >>$jf
+    echo "THREAD-COUNT=4" >>$jf
+    echo "Job [$job] created."
+    previewJobProperties
+    # Run the job
+    echo "Corb job created. Please switch to the folder [corb/job_${job}] and run 'mlsh corb' again"
     exit 0
   else
     echo "No job provided. Exiting."
@@ -128,30 +123,22 @@ setupJob() {
 previewJobProperties() {
   echo "Job properties [${job}.corb]:"
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  grep -v '^#\|^$' ${job}.corb| sort
+  grep -v '^#\|^$' ${job}.corb | sort
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
   echo ""
   echo -n "Press 'e' to edit or any key to continue ... "
   read -n 1 answer
   echo ""
   if [[ $answer == [Yy] ]]; then
-      $EDITOR ${job}.corb
+    $EDITOR ${job}.corb
   fi
 }
 
-prepJob() {
+interactive() {
   # Check for a the existence of at least 1 properties file in the current folder
   if [ -z "$(find . -name "*.corb" -type f -maxdepth 1)" ]; then
     echo "No corb properties files found in the current folder. "
-    echo -n "Please provide a job or type a name to create one: "
-    read job
-    if [ -n "$job" ]; then
-      jobWizardJob $job
-      exit 0
-    else
-      echo "No job provided. Exiting."
-    fi
-    echo ""
+    setupJob
     exit 1
   fi
 
@@ -168,7 +155,7 @@ prepJob() {
   echo ""
   echo -n "Select job to run or press ENTER to create a new job: "
   read choice
-  if [ -z "$choice" ];then
+  if [ -z "$choice" ]; then
     setupJob
     exit 0
   fi
@@ -188,15 +175,15 @@ prepJob() {
   echo -ne "\nPreview the output file [$rep]? [y/n] "
   read -n 1 answer
   if [[ $answer == [Yy] ]]; then
-      $EDITOR $rep
+    $EDITOR $rep
   fi
 
   rep=./corb-report-${job}-${now}.txt
-  if [ -f "$rep" ];then
+  if [ -f "$rep" ]; then
     echo -ne "\nPreview the report file [$rep]? [y/n] "
     read -n 1 answer
     if [[ $answer == [Yy] ]]; then
-        $EDITOR $rep
+      $EDITOR $rep
     fi
   fi
   mkdir -p corbLogs
@@ -247,5 +234,5 @@ log=./results/run-${startedAt}/log
 if [ -n "$job" ]; then
   main $job
 else
-  prepJob
+  interactive
 fi
