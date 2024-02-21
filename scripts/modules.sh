@@ -27,17 +27,19 @@ main() {
   if [ -z "$option" ]; then
     # Ask user to select from known options
     echo "Select option:"
-    echo "1. find     | in modules database"
-    echo "2. load     | documents modified locally"
-    echo "3. clone    | make a copy of a downloaded module with a new name"
-    echo "4. reset    | to original state"
+    echo "1. find       | in modules database"
+    echo "2. load       | documents modified locally"
+    echo "3. load one   | load only 1 document modified locally"
+    echo "4. clone      | make a copy of a downloaded module with a new name"
+    echo "5. reset      | to original state"
     echo -n "Enter your choice: "
     read choice
     case $choice in
       1) option="find" ;;
       2) option="load" ;;
-      3) option="clone" ;;
-      4) option="reset" ;;
+      3) option="loadOne" ;;
+      4) option="clone" ;;
+      5) option="reset" ;;
       *)
         echo "Unknown option [$option]"
         echo "Please select an option [find/load/reset]"
@@ -49,6 +51,7 @@ main() {
     esac
     echo "User selected option [$option]"
   fi
+
   case $option in
     # Find matching modules in the database and download if required
     find|retrieve|match|search)
@@ -65,6 +68,11 @@ main() {
     # Load one or more locally edit modules into the database
     load|update)
       loadModules
+      ;;
+
+    # Load one or more locally edit modules into the database
+    loadOne)
+      loadModules "one"
       ;;
 
     # Take a copy of a local file for upload to a new name
@@ -134,7 +142,6 @@ cloneModule() {
   test -n $(which tree) && tree $ddir
 }
 
-
 # Find matching modules in the database and download if required
 findModules() {
     local ddir=modules_${TODAY} # one directory for a given day is plenty
@@ -201,7 +208,24 @@ loadModules() {
     else
         reset="false"
     fi
+
     local ddir=modules_$(date +%Y%m%d) # one directory for a given day is plenty
+
+    if [ "$1" == "one" ]; then
+      i=1
+      cat $ddir/module-info.txt| while read -r line; do
+        local uri=$(echo $line | awk -F~ '{print $1}' )
+        echo "  $i $uri"
+        i=$((i+1))
+      done
+      echo "Pick one to load: "
+      read choice
+      local line=$(cat $ddir/module-info.txt | head -n $choice | tail -n 1 )
+      echo $line > $ddir/module-load.txt
+    else
+      cp $ddir/module-info.txt $ddir/module-load.txt
+    fi
+
     # if the current path contains $ddir then proceed
     if [[ $(pwd) != *"$ddir"* && ! -d "$ddir" ]]; then
         echo "Please run this command from the directory containing the modules to load"
@@ -227,9 +251,9 @@ loadModules() {
         deployModule \
             "$localFile" "$uri" \
             "$perms" "$cols" "$reset"
-    done < $ddir/module-info.txt
+    done < $ddir/module-load.txt
+    test -f $ddir/module-load.txt && rm $ddir/module-load.txt
 }
-
 
 initialize() {
     if [ -z "$ML_ENV" ]; then
@@ -284,9 +308,9 @@ deployModule() {
         URL="${URL}collection=/mod/devel/${TODAY}&"
         URL="${URL}collection=/mod/update&"
     fi
-    set -o xtrace
+    #set -o xtrace
     curl "${putOpts[@]}" "$URL"
-    set +o xtrace
+    #set +o xtrace
     if $reset;then
       II "  Reset module [$dest]"
     else
