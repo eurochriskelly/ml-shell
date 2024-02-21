@@ -5,9 +5,8 @@ main() {
   local start=$(date +%s)
   local type="validate"
   local job=$1
-  local now=$2
-  local dataReport=corb-report-${job}-${now}.txt
-  local javaReport=corb-output-${job}-${now}.log
+  local dataReport=corb-report-latest.txt
+  local javaReport=corb-output-latest.log
   echo "" >$dataReport
   echo "" >$javaReport
 
@@ -52,6 +51,7 @@ initialize() {
   fi
 
   # Dump configuration settings used
+  mkdir -p corbLogs
   local c=$runDir/config.txt
   touch $c
   echo "HOST: $ML_HOST" >>$c
@@ -129,7 +129,7 @@ previewJobProperties() {
   echo -n "Press 'e' to edit or any key to continue ... "
   read -n 1 answer
   echo ""
-  if [[ $answer == [Yy] ]]; then
+  if [[ $answer == [Ee] ]]; then
     $EDITOR ${job}.corb
   fi
 }
@@ -169,26 +169,46 @@ interactive() {
   done
   previewJobProperties
   now="$(date +%s)"
-  main $job $now
-  # Ask user if they want to preview the output file
-  rep=./corb-output-${job}-${now}.log
-  echo -ne "\nPreview the output file [$rep]? [y/n] "
-  read -n 1 answer
-  if [[ $answer == [Yy] ]]; then
-    $EDITOR $rep
-  fi
 
-  rep=./corb-report-${job}-${now}.txt
-  if [ -f "$rep" ]; then
-    echo -ne "\nPreview the report file [$rep]? [y/n] "
+  local log=./corb-output-latest.log
+  local rep=./corb-report-latest.txt
+  main $job
+
+  # Print the time it took to run the job
+  echo "Job completed in [$(($(date +%s) - $startedAt))] seconds"
+  # Ask user if they want to preview the output file
+  cp $log ./corbLogs/corb-output-${job}-${now}.log
+  # if the file contains the string "success - exiting with code 0" print the name only.
+  # Otherwise offer to view the file.
+  if grep -q "success - exiting with code 0" $log; then
+    echo "Job completed successfully. Output file [$log]"
+  else
+    echo -ne "\nPreview the output file [$log]? [y/n] "
     read -n 1 answer
     if [[ $answer == [Yy] ]]; then
-      $EDITOR $rep
+      $EDITOR $log
     fi
   fi
-  mkdir -p corbLogs
-  mv corb-report*.txt corbLogs
-  mv corb-output*.log corbLogs
+
+  cp $rep ./corbLogs/corb-report-${job}-${now}.txt
+  if [ -f "$rep" ]; then
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    head -n 5 $rep | cut -c 1-120
+    echo ...
+    tail -n 5 $rep | cut -c 1-120
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo -ne "\nView the report file [$rep]? [y/n] "
+    read -n 1 answer
+    if [[ $answer == [Yy] ]]; then
+      # $EDITOR $rep
+      if [ -n "$(which sc-im)" ]; then
+        sc-im $rep
+      else
+        echo "sc-im not found. Please install sc-im to view the report file."
+        $EDITOR $rep
+      fi
+    fi
+  fi
 }
 
 while [ "$#" -gt "0" ]; do
