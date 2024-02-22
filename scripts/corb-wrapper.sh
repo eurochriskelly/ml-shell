@@ -21,9 +21,9 @@ main() {
     -DEXPORT-FILE-NAME="$dataReport"
   )
 
-  set -o xtrace
+  # set -o xtrace
   java "${corbOpts[@]}" com.marklogic.developer.corb.Manager >$javaReport 2>&1
-  set +o xtrace
+  # set +o xtrace
 
   echo " ----------------- " >>$javaReport
   II "-> Corb job [$job] took [$(($(date +%s) - $start))] seconds"
