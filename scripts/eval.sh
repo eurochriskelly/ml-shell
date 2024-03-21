@@ -132,7 +132,8 @@ interactivelyRunScriptsInDir() {
   LAST_EXTENSION=$extension
   # calculate elapsed time
   start=$(date +%s)
-  echo "----------------------------------------"
+  # Echo in green
+  echo -e "\033[32m--------------------------------------------\033[0m"
   result="$(doEval $script $database $params)"
   echo "$result" > /tmp/mlsh-eval.out
   local numLines=$(echo "$result" | wc -l)
@@ -151,7 +152,9 @@ interactivelyRunScriptsInDir() {
       echo "  $line"
     fi
   done
-  echo "----------------------------------------"
+  echo -e "\033[32m--------------------------------------------\033[0m"
+  echo -e "\033[32mFull response @ /tmp/mlsh-eval.out\033[0m"
+
   end=$(date +%s)
   elapsed=$((end - start))
   echo "Elapsed time: $elapsed seconds"
