@@ -7,6 +7,7 @@ MLSH_SESSION=MLSH_SESSION_$(date +%s)
 SESS_LOG=/tmp/mlsh-${MLSH_SESSION}.log
 echo "Starting MLSH session: $MLSH_SESSION" > $SESS_LOG
 
+# TODO: source common.sh
 # create commands for yellow, green, red, etc.
 yy() { echo -e "\033[33m$@\033[0m"; }
 gg() { echo -e "\033[32m$@\033[0m"; }
@@ -17,7 +18,7 @@ cc() { echo -e "\033[36m$@\033[0m"; }
 mm() { echo -e "\033[35m$@\033[0m"; }
 ww() { echo -e "\033[37m$@\033[0m"; }
 
-# red text on green background
+# red text on green background etc.
 rrG() { echo -e "\033[31m\033[42m$@\033[0m"; }
 wwM() { echo -e "\033[37m\033[45m$@\033[0m"; }
 bbW() { echo -e "\033[34m\033[47m$@\033[0m"; }
@@ -37,7 +38,7 @@ wrapMlsh() {
   clear
   $MLSH_CMD_PATH $mlshCmd $mlshArgs | tee -a $SESS_LOG
 
-  echo "Command complete .. press any key to continue"
+  echo "$(yy Command complete .. press any key to continue)"
   read -n 1 -s
   clear
   showHelp
@@ -45,7 +46,7 @@ wrapMlsh() {
 
 showHelp() {
   # TODO: Use mlsh help which has more options
-  echo `bb "Available commands (see $SESS_LOG for command output):"`
+  echo `bb "  Available commands (see $SESS_LOG for command output):"`
   echo "  h|helpme   - Show help"
   echo "  u|update   - Update MLSH"
   echo "  q|qconsole - Start Query Console"
@@ -69,12 +70,13 @@ set_prompt() {
     local time_value=$(date +"%H:%M")  # Dynamically get the current time
 
     # Construct the prompt
-    PS1="\n`kkM $time_value ``wwM " MLSH "`$(bbW 🌍 `yy $ML_ENV`)"
-    PS1+="\n\w \$ "
+    PS1="\n`kkM $time_value ``wwM " MLSH "`$(bbW 🌍 `yy $ML_ENV`) \w "
+    PS1+="\n`mm \$` "
 }
 
 PROMPT_COMMAND=set_prompt
 
+# mlsh aliases
 alias mlsh="echo 'Already inside ML shell!'"
 alias helpme='clear;showHelp'
 alias h='clear;showHelp'
@@ -97,6 +99,9 @@ alias showenv='wrapMlsh env'
 alias se='wrapMlsh env'
 alias chenv='wrapMlsh env'
 alias ce='wrapMlsh env'
+
+# common aliases
+alias c='clear'
 
 clear
 echo `bb "Welcome to MLSH - Your Custom Shell Environment for MarkLogic"`
