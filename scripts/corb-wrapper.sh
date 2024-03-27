@@ -138,6 +138,7 @@ interactive() {
   # Check for a the existence of at least 1 properties file in the current folder
   if [ -z "$(find . -name "*.corb" -type f -maxdepth 1)" ]; then
     echo "No corb properties files found in the current folder. "
+    echo "Corb properties files should be named with .corb extension!"
     setupJob
     exit 1
   fi
