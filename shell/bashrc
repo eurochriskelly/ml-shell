@@ -1,10 +1,13 @@
 #!/bin/bash
 
+export MLSH_CMD_PATH="${HOME}/.mlsh.d/mlsh/scripts/mlsh.sh"
+
 export BASH_SILENCE_DEPRECATION_WARNING=1
 MLSH_SESSION=MLSH_SESSION_$(date +%s)
 SESS_LOG=/tmp/mlsh-${MLSH_SESSION}.log
 echo "Starting MLSH session: $MLSH_SESSION" > $SESS_LOG
 
+# TODO: source common.sh
 # create commands for yellow, green, red, etc.
 yy() { echo -e "\033[33m$@\033[0m"; }
 gg() { echo -e "\033[32m$@\033[0m"; }
@@ -15,7 +18,7 @@ cc() { echo -e "\033[36m$@\033[0m"; }
 mm() { echo -e "\033[35m$@\033[0m"; }
 ww() { echo -e "\033[37m$@\033[0m"; }
 
-# red text on green background
+# red text on green background etc.
 rrG() { echo -e "\033[31m\033[42m$@\033[0m"; }
 wwM() { echo -e "\033[37m\033[45m$@\033[0m"; }
 bbW() { echo -e "\033[34m\033[47m$@\033[0m"; }
@@ -27,21 +30,23 @@ wrapMlsh() {
   echo "Running MLSH command: $mlshCmd" >> $SESS_LOG
   shift
   local mlshArgs="$@"
-  local mlshCmdPath="${HOME}/.mlsh.d/mlsh/scripts/mlsh.sh"
-  chmod +x $mlshCmdPath
-  if [ -z "$mlshCmdPath" ]; then
+  chmod +x $MLSH_CMD_PATH
+  if [ -z "$MLSH_CMD_PATH" ]; then
     echo "Command '$mlshCmd' not found. Please make sure MarkLogic is installed and the command is in your PATH."
     return 1
   fi
   clear
-  $mlshCmdPath $mlshCmd $mlshArgs | tee -a $SESS_LOG
+  $MLSH_CMD_PATH $mlshCmd $mlshArgs | tee -a $SESS_LOG
+
+  echo "$(yy Command complete .. press any key to continue)"
+  read -n 1 -s
   clear
   showHelp
 }
 
 showHelp() {
   # TODO: Use mlsh help which has more options
-  echo `bb "Available commands (see $SESS_LOG for command output):"`
+  echo `bb "  Available commands (see $SESS_LOG for command output):"`
   echo "  h|helpme   - Show help"
   echo "  u|update   - Update MLSH"
   echo "  q|qconsole - Start Query Console"
@@ -51,7 +56,6 @@ showHelp() {
   echo "  mod|module - Manage modules"
   echo "  corb       - Run CoRB"
   echo "  mlcp       - Run MLCP"
-  echo "  se|showenv - Show environment"
   echo "  ce|chenv   - Change environment"
   echo ""
 }
@@ -66,12 +70,13 @@ set_prompt() {
     local time_value=$(date +"%H:%M")  # Dynamically get the current time
 
     # Construct the prompt
-    PS1="\n`kkM $time_value ``wwM " MLSH "`$(bbW 🌍 `yy $ML_ENV`)"
-    PS1+=" \w \$ "
+    PS1="\n`kkM $time_value ``wwM " MLSH "`$(bbW 🌍 `yy $ML_ENV`) \w "
+    PS1+="\n`mm \$` "
 }
 
 PROMPT_COMMAND=set_prompt
 
+# mlsh aliases
 alias mlsh="echo 'Already inside ML shell!'"
 alias helpme='clear;showHelp'
 alias h='clear;showHelp'
@@ -95,9 +100,11 @@ alias se='wrapMlsh env'
 alias chenv='wrapMlsh env'
 alias ce='wrapMlsh env'
 
+# common aliases
+alias c='clear'
+
 clear
 echo `bb "Welcome to MLSH - Your Custom Shell Environment for MarkLogic"`
 echo ""
 showHelp
-
 
