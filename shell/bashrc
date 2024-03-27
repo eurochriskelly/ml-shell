@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export MLSH_CMD_PATH="${HOME}/.mlsh.d/mlsh/scripts/mlsh.sh"
+
 export BASH_SILENCE_DEPRECATION_WARNING=1
 MLSH_SESSION=MLSH_SESSION_$(date +%s)
 SESS_LOG=/tmp/mlsh-${MLSH_SESSION}.log
@@ -27,14 +29,16 @@ wrapMlsh() {
   echo "Running MLSH command: $mlshCmd" >> $SESS_LOG
   shift
   local mlshArgs="$@"
-  local mlshCmdPath="${HOME}/.mlsh.d/mlsh/scripts/mlsh.sh"
-  chmod +x $mlshCmdPath
-  if [ -z "$mlshCmdPath" ]; then
+  chmod +x $MLSH_CMD_PATH
+  if [ -z "$MLSH_CMD_PATH" ]; then
     echo "Command '$mlshCmd' not found. Please make sure MarkLogic is installed and the command is in your PATH."
     return 1
   fi
   clear
-  $mlshCmdPath $mlshCmd $mlshArgs | tee -a $SESS_LOG
+  $MLSH_CMD_PATH $mlshCmd $mlshArgs | tee -a $SESS_LOG
+
+  echo "Command complete .. press any key to continue"
+  read -n 1 -s
   clear
   showHelp
 }
@@ -51,7 +55,6 @@ showHelp() {
   echo "  mod|module - Manage modules"
   echo "  corb       - Run CoRB"
   echo "  mlcp       - Run MLCP"
-  echo "  se|showenv - Show environment"
   echo "  ce|chenv   - Change environment"
   echo ""
 }
@@ -67,7 +70,7 @@ set_prompt() {
 
     # Construct the prompt
     PS1="\n`kkM $time_value ``wwM " MLSH "`$(bbW 🌍 `yy $ML_ENV`)"
-    PS1+=" \w \$ "
+    PS1+="\n\w \$ "
 }
 
 PROMPT_COMMAND=set_prompt
@@ -99,5 +102,4 @@ clear
 echo `bb "Welcome to MLSH - Your Custom Shell Environment for MarkLogic"`
 echo ""
 showHelp
-
 

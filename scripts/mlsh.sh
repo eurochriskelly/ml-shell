@@ -57,7 +57,7 @@ mlsh() {
       ;;
 
     corb)
-      bash $MLSH_TOP_DIR/scripts/corb-wrapper.sh "${args[@]}"
+      bash $MLSH_TOP_DIR/node_modules/mlsh-corb/src/corb-wrapper.sh "${args[@]}"
       ;;
 
     *)
