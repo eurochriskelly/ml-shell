@@ -1,0 +1,103 @@
+#!/bin/bash
+
+export BASH_SILENCE_DEPRECATION_WARNING=1
+MLSH_SESSION=MLSH_SESSION_$(date +%s)
+SESS_LOG=/tmp/mlsh-${MLSH_SESSION}.log
+echo "Starting MLSH session: $MLSH_SESSION" > $SESS_LOG
+
+# create commands for yellow, green, red, etc.
+yy() { echo -e "\033[33m$@\033[0m"; }
+gg() { echo -e "\033[32m$@\033[0m"; }
+rr() { echo -e "\033[31m$@\033[0m"; }
+bb() { echo -e "\033[34m$@\033[0m"; }
+pp() { echo -e "\033[35m$@\033[0m"; }
+cc() { echo -e "\033[36m$@\033[0m"; }
+mm() { echo -e "\033[35m$@\033[0m"; }
+ww() { echo -e "\033[37m$@\033[0m"; }
+
+# red text on green background
+rrG() { echo -e "\033[31m\033[42m$@\033[0m"; }
+wwM() { echo -e "\033[37m\033[45m$@\033[0m"; }
+bbW() { echo -e "\033[34m\033[47m$@\033[0m"; }
+bbM() { echo -e "\033[34m\033[45m$@\033[0m"; }
+kkM() { echo -e "\033[30m\033[45m$@\033[0m"; }
+
+wrapMlsh() {
+  local mlshCmd=$1
+  echo "Running MLSH command: $mlshCmd" >> $SESS_LOG
+  shift
+  local mlshArgs="$@"
+  local mlshCmdPath="${HOME}/.mlsh.d/mlsh/scripts/mlsh.sh"
+  chmod +x $mlshCmdPath
+  if [ -z "$mlshCmdPath" ]; then
+    echo "Command '$mlshCmd' not found. Please make sure MarkLogic is installed and the command is in your PATH."
+    return 1
+  fi
+  clear
+  $mlshCmdPath $mlshCmd $mlshArgs | tee -a $SESS_LOG
+  clear
+  showHelp
+}
+
+showHelp() {
+  # TODO: Use mlsh help which has more options
+  echo `bb "Available commands (see $SESS_LOG for command output):"`
+  echo "  h|helpme   - Show help"
+  echo "  u|update   - Update MLSH"
+  echo "  q|qconsole - Start Query Console"
+  echo "  e|eval     - Evaluate scripts in current folder"
+  echo "  l|logs     - MarkLogic log queries"
+  echo "  l2|logs2   - View mlsh logs in less"
+  echo "  mod|module - Manage modules"
+  echo "  corb       - Run CoRB"
+  echo "  mlcp       - Run MLCP"
+  echo "  se|showenv - Show environment"
+  echo "  ce|chenv   - Change environment"
+  echo ""
+}
+
+set_prompt() {
+    # Static labels for the first line
+    local labels="`rr ENV`   `rr LOG_FILE`                   `rr TIME`"
+
+    # Values for the second line
+    local env_value="$ML_ENV"  # Dynamically set this as per your requirement
+    local log_file_value="$SESS_LOG"  # Dynamically set this as per your requirement
+    local time_value=$(date +"%H:%M")  # Dynamically get the current time
+
+    # Construct the prompt
+    PS1="\n`kkM $time_value ``wwM " MLSH "`$(bbW 🌍 `yy $ML_ENV`)"
+    PS1+=" \w \$ "
+}
+
+PROMPT_COMMAND=set_prompt
+
+alias mlsh="echo 'Already inside ML shell!'"
+alias helpme='clear;showHelp'
+alias h='clear;showHelp'
+alias corb='wrapMlsh corb'
+alias eval='wrapMlsh eval'
+alias e='wrapMlsh eval'
+alias qconsole='wrapMlsh qconsole'
+alias qc='wrapMlsh qc'
+alias q='wrapMlsh qc'
+alias mlcp='wrapMlsh mlcp'
+alias logs='wrapMlsh log'
+alias l='wrapMlsh log'
+alias logs2='less -R -f $SESS_LOG'
+alias l2='less -R -f $SESS_LOG'
+alias module='wrapMlsh module'
+alias mod='wrapMlsh module'
+alias update='wrapMlsh update'
+alias u='wrapMlsh update'
+alias showenv='wrapMlsh env'
+alias se='wrapMlsh env'
+alias chenv='wrapMlsh env'
+alias ce='wrapMlsh env'
+
+clear
+echo `bb "Welcome to MLSH - Your Custom Shell Environment for MarkLogic"`
+echo ""
+showHelp
+
+
