@@ -27,11 +27,11 @@ mlsh() {
       source $MLSH_TOP_DIR/init.sh
       ;;
 
-    env)
+    env|mlenv|showenv)
       bash $MLSH_TOP_DIR/scripts/config.sh "$@"
       ;;
 
-    help)
+    helpme|help)
       showHelp ${args[@]}
       ;;
 
@@ -61,12 +61,21 @@ mlsh() {
       ;;
 
     *)
-      echo "Unknown command [$cmd]"
-      showHelp
+      dropToShell
       ;;
   esac
 
   echo -e "${bM}+${end}"
+}
+
+dropToShell() {
+  CUSTOM_BASHRC="$HOME/.mlsh.d/mlsh/shell/bashrc"
+  # Starting bash with the custom bashrc
+  if [ -f "$CUSTOM_BASHRC" ];then
+    exec /bin/bash --rcfile "$CUSTOM_BASHRC" --noprofile
+  else
+    echo "No custom bashrc found [$CUSTOM_BASHRC]. Starting default shell."
+  fi
 }
 
 showHelp() {
