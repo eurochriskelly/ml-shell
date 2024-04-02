@@ -10,7 +10,6 @@ mlsh() {
     echo "No environment selected. Please run 'mlsh env'"
     exit 0
   fi
-  clear
   # Define color codes
   fM='\033[35m' # Foreground Magenta
   bM='\033[45m' # Background Magenta
@@ -40,20 +39,20 @@ mlsh() {
       bash $MLSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
-    qc|qconsole)
-      bash $MLSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
-      ;;
-
-    mod|module|modules)
-      bash $MLSH_TOP_DIR/scripts/modules.sh "${args[@]}"
+    mlcp)
+      bash $MLSH_TOP_DIR/scripts/mlcp-wrapper.sh "${args[@]}"
       ;;
 
     log|logs)
       bash $MLSH_TOP_DIR/scripts/logs.sh "${args[@]}"
       ;;
 
-    mlcp)
-      bash $MLSH_TOP_DIR/scripts/mlcp-wrapper.sh "${args[@]}"
+    qc|qconsole)
+      bash $MLSH_TOP_DIR/node_modules/mlsh-plugin-qconsole/src/qconsole.sh "${args[@]}"
+      ;;
+
+    mod|module|modules)
+      bash $MLSH_TOP_DIR/node_modules/mlsh-plugin-modules/src/modules.sh "${args[@]}"
       ;;
 
     corb)
