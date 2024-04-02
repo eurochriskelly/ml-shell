@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $MLSH_TOP_DIR/scripts/common.sh
+source $MLSH_TOP_DIR/node_modules/mlsh-core/scripts/common.sh
 LAST_SCRIPT=
 
 showHelp() {
