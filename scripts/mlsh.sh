@@ -10,7 +10,6 @@ mlsh() {
     echo "No environment selected. Please run 'mlsh env'"
     exit 0
   fi
-  clear
   # Define color codes
   fM='\033[35m' # Foreground Magenta
   bM='\033[45m' # Background Magenta
@@ -40,20 +39,24 @@ mlsh() {
       bash $MLSH_TOP_DIR/scripts/eval.sh "${args[@]}"
       ;;
 
-    qc|qconsole)
-      bash $MLSH_TOP_DIR/scripts/qconsole.sh "${args[@]}"
-      ;;
-
-    mod|module|modules)
-      bash $MLSH_TOP_DIR/scripts/modules.sh "${args[@]}"
+    mlcp)
+      bash $MLSH_TOP_DIR/scripts/mlcp-wrapper.sh "${args[@]}"
       ;;
 
     log|logs)
       bash $MLSH_TOP_DIR/scripts/logs.sh "${args[@]}"
       ;;
 
-    mlcp)
-      bash $MLSH_TOP_DIR/scripts/mlcp-wrapper.sh "${args[@]}"
+    qc|qconsole)
+      bash $MLSH_TOP_DIR/node_modules/mlsh-plugin-qconsole/src/qconsole.sh "${args[@]}"
+      ;;
+
+    b|backup)
+      bash $MLSH_TOP_DIR/node_modules/mlsh-plugin-backup/src/backup.sh "${args[@]}"
+      ;;
+
+    mod|module|modules)
+      bash $MLSH_TOP_DIR/node_modules/mlsh-plugin-modules/src/modules.sh "${args[@]}"
       ;;
 
     corb)
@@ -168,6 +171,18 @@ showHelp() {
       echo " mlsh modules undeploy <module>"
       ;;
 
+    "backup")
+      echo "Usage: mlsh backup <command>"
+      echo ""
+      echo "Manage backups."
+      echo ""
+      echo "Examples:"
+      echo " mlsh backup list"
+      echo " mlsh backup create"
+      echo " mlsh backup location"
+      echo " mlsh backup restore <backup>"
+      ;;
+
     *)
       echo ""
       echo "mlsh <command> <args>                           # run a command"
@@ -180,6 +195,7 @@ showHelp() {
       echo " mlsh log [OPTIONS]                              # show log for database"
       echo " mlsh corb <task> <job> <threads> <batchSize>    # run corb task"
       echo " mlsh eval <script> <db> <vars>                  # run eval script"
+      echo " mlsh backup <command>                           # run eval script"
       echo " mlsh mlcp <args>                                # run mlcp"
       echo " mlsh modules <command>                          # manage modules"
       echo " mlsh help <command> .                           # for more info on a command"

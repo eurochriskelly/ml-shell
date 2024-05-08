@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $MLSH_TOP_DIR/scripts/common.sh
+source $MLSH_TOP_DIR/node_modules/mlsh-core/scripts/common.sh
 LAST_SCRIPT=
 
 showHelp() {
@@ -85,7 +85,7 @@ interactivelyRunScriptsInDir() {
   echo "Scripts in current directory:"
   i=1
   for s in $scripts; do
-    echo "  ${i}. $s"
+    echo -e "\033[33m  ${i}.\033[0m $s"
     i=$((i + 1))
   done
   local extra=

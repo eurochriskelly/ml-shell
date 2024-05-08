@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Log analysis tasks
-source $MLSH_TOP_DIR/scripts/common.sh > /dev/null 2>&1
+source $MLSH_TOP_DIR/node_modules/mlsh-core/scripts/common.sh > /dev/null 2>&1
 
 main() {
   #

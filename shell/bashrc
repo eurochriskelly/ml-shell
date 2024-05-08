@@ -54,6 +54,7 @@ showHelp() {
   echo "  l|logs     - MarkLogic log queries"
   echo "  l2|logs2   - View mlsh logs in less"
   echo "  mod|module - Manage modules"
+  echo "  backup     - Manage backups and snapshots"
   echo "  corb       - Run CoRB"
   echo "  mlcp       - Run MLCP"
   echo "  ce|chenv   - Change environment"
