@@ -13,16 +13,19 @@ showHelp() {
 }
 
 run() {
+  LL "Running eval with args $@"
   if [ "$#" -eq 0 ]; then
+    local database=$ML_CONTENT_DB
     echo -n "Select a database or press ENTER for default [$ML_CONTENT_DB]: "
     read dbChoice
-    local database=$ML_CONTENT_DB
-    if [ -n "$dbChoice" ]; then
-      database=$dbChoice
-    fi
+    local modulesDb=$ML_MODULES_DB
+    echo -n "Select a modules db or press ENTER for default [$ML_MODULES_DB]: "
+    read modDbChoice
+    if [ -n "$dbChoice" ]; then database=$dbChoice; fi
+    if [ -n "$modDbChoice" ]; then database=$modDbChoice; fi
     while true; do
-      echo "MLSH EVAL: DB [$database]"
-      interactivelyRunScriptsInDir $database
+      echo "MLSH EVAL: DB [$database] MODB [$modulesDb]"
+      interactivelyRunScriptsInDir $database $modulesDb
     done
     exit 0
   else
@@ -81,6 +84,7 @@ run() {
 interactivelyRunScriptsInDir() {
   # get xqy, js, and sjs files
   local database=$1
+  local modules=$2
   local scripts=$(ls -1 *.xqy *.js *.sjs 2>/dev/null | sort)
   echo "Scripts in current directory:"
   i=1
@@ -95,11 +99,11 @@ interactivelyRunScriptsInDir() {
   if [ "$choice" == "x" ]; then
     exit 0
   fi
-
   if [ -z "$choice" ]; then
     # if user pressed enter, re-run last script
     script=${LAST_SCRIPT}
     if [ -z "$script" ]; then
+      LL "Nothing selected and no previous script ran. Exiting"
       echo "Nothing selected and no previous script ran. Exiting"
       exit 0
     fi
@@ -112,7 +116,6 @@ interactivelyRunScriptsInDir() {
     fi
     local script=$(echo $scripts | cut -d' ' -f$scriptNum)
   fi
-
   if [ -z $script ]; then
     echo "No script selected"
     exit 1
@@ -125,17 +128,23 @@ interactivelyRunScriptsInDir() {
   fi
   script=${script%.*}
   database="$(checkForDatabaseOverride $script $extension $database)"
+
   clear
-  echo "ML EVAL DB [$database]."
-  echo RUNNING: doEval $script $database $params
+  echo "ML EVAL DB [$database] MODB [$modules]."
+  echo "RUNNING: doEval $script $database $params"
   LAST_SCRIPT=$script
   LAST_EXTENSION=$extension
   # calculate elapsed time
   start=$(date +%s)
   # Echo in green
-  echo -e "\033[32m--------------------------------------------\033[0m"
-  result="$(doEval $script $database $params)"
-  echo "$result" > /tmp/mlsh-eval.out
+  echo -e "\033[32m------------------- ------------------------\033[0m"
+  tmpScript=$(modulesWrapper $script $extension $database $modules)
+  LL "tmpScript: $tmpScript $database params $params"
+  LL "gonna run doEval $tmpScript $database $params"
+  result="$(doEval $tmpScript $database $params)"
+  LL "result: are we getting a result?"
+
+  echo "$result" >/tmp/mlsh-eval.out
   local numLines=$(echo "$result" | wc -l)
   LL "Output temporarily stored in /tmp/mlsh-eval.out"
   # in the terminal we want to truncate the response to 50 lines
@@ -152,7 +161,7 @@ interactivelyRunScriptsInDir() {
       echo "  $line"
     fi
   done
-  echo -e "\033[32m--------------------------------------------\033[0m"
+  echo -e "\033[32m------------------- ------------------------\033[0m"
   echo -e "\033[32mFull response @ /tmp/mlsh-eval.out\033[0m"
 
   end=$(date +%s)
@@ -178,6 +187,36 @@ checkForDatabaseOverride() {
     fi
   fi
   echo "$database"
+}
+
+modulesWrapper() {
+  local input_file=$1
+  local extension=$2
+  local database=$3
+  local modules=$4
+  local tmp_file="/tmp/mlsh-evaler/_${input_file}.${extension}"
+  # if extension is sjs or js then do nothing
+  if [ "$extension" == "sjs" ] || [ "$extension" == "js" ]; then
+    cp $input_file $tmp_file
+    return
+  fi
+  # Extract the filename and contents
+  filename=$(basename "$input_file" .xqy)
+  test -d /tmp/mlsh-evaler || mkdir -p /tmp/mlsh-evaler
+  output_file="/tmp/mlsh-evaler/_${input_file}.xqy"
+  # Read the contents of the input file
+  contents=$(<"${input_file}.${extension}")
+  # Create the output XQuery file with contents, database, and modules embedded in the template
+  cat <<EOF >"$output_file"
+xquery version "1.0-ml";
+xdmp:eval(<root><![CDATA[
+$contents
+]]></root>//text(), (), <options xmlns="xdmp:eval">
+  <database>{xdmp:database("$database")}</database>
+  <modules>{xdmp:database("$modules")}</modules>
+</options>)
+EOF
+  echo $tmp_file
 }
 
 run $@
