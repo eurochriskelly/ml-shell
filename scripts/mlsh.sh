@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source $MLSH_TOP_DIR/scripts/common.sh
+if [ -f "$MLSH_TOP_DIR/scripts/common.sh" ];then
+  source $MLSH_TOP_DIR/scripts/common.sh
+fi
 test -f $HOME/.mlshrc-gen && source $HOME/.mlshrc-gen
 mlsh() {
   local cmd=$1

@@ -139,14 +139,9 @@ interactivelyRunScriptsInDir() {
   # Echo in green
   echo -e "\033[32m------------------- ------------------------\033[0m"
   tmpScript=$(modulesWrapper $script $extension $database $modules)
-  LL "tmpScript: $tmpScript $database params $params"
-  LL "gonna run doEval $tmpScript $database $params"
   result="$(doEval $tmpScript $database $params)"
-  LL "result: are we getting a result?"
-
   echo "$result" >/tmp/mlsh-eval.out
   local numLines=$(echo "$result" | wc -l)
-  LL "Output temporarily stored in /tmp/mlsh-eval.out"
   # in the terminal we want to truncate the response to 50 lines
   # The full response should be view with a better tool (e.g. vim, emacs)
   if [ $numLines -gt 50 ]; then
@@ -158,7 +153,7 @@ interactivelyRunScriptsInDir() {
     if [ ${#line} -gt 200 ]; then
       echo "  ${line:0:200} ... (long line truncated)"
     else
-      echo "  $line"
+      echo "  ""$line"
     fi
   done
   echo -e "\033[32m------------------- ------------------------\033[0m"
